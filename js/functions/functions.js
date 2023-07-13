@@ -1,3 +1,5 @@
+import { counters } from "../data/variables.js";
+
 // Increase any of the xxxCounter values by 1 or more
 // Call function by equalizing the `let xxxCounter` variable with the function call.
 // E.g. elementCounter = increaseCounter(elementCounter)

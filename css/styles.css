@@ -1,43 +1,48 @@
-/* CSS for entire <index.html> */
+/*
+ CSS !IMPORTANT - In order to simulate designing a web inside of a web
+ we need specific classes and ids that can never be chosen but keep their
+ CSS rules no matter what you write inside of  <div id="FEFBEoutput"></div>
+*/
 * {
   box-sizing: border-box;
 }
 body {
-  max-width: 2560px;
-  margin: 0 auto;
+  max-width: 2560px !important;
+  margin: 0 auto !important;
 }
+
 #FEFBEseparator {
-  display: grid;
-  grid-template-columns: auto 10px 1500px;
-  gap: 0;
-  align-items: start;
+  display: grid !important;
+  grid-template-columns: auto 10px 1500px !important;
+  gap: 0 !important;
+  align-items: start !important;
 }
 
 /* CSS for Editor Menu (The HTML + CSS Tabs) Sidebar */
 #FEFBEeditor {
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+  border: 1px solid #ccc !important;
+  background-color: #f1f1f1 !important;
 }
 .FEFBEtabButtons {
   background-color: #f1f1f1;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  font-weight: bold;
+  border: none !important;
+  outline: none !important;
+  cursor: pointer !important;
+  padding: 14px 16px !important;
+  font-weight: bold !important;
 }
 .FEFBEtabButtons:hover,
 .FEFBEtabButtons:focus {
-  background-color: #ddd;
+  background-color: #ddd !important;
 }
 .FEFBEtabButtons.active {
-  background-color: #ccc;
+  background-color: #ccc !important;
 }
 
 #FEFBEhtml,
 #FEFBEcss {
-  background-color: white;
-  padding: 1rem;
+  background-color: white !important;
+  padding: 1rem !important;
 }
 
 #FEFBEcss {
@@ -45,127 +50,128 @@ body {
 }
 
 #FEFBEverticalLine {
-  width: 10px;
-  height: 100%;
-  background-color: #f1f1f1;
-  border: 1px solid #ccc;
-  overflow: hidden;
+  width: 10px !important;
+  height: 100% !important;
+  background-color: #f1f1f1 !important;
+  border: 1px solid #ccc !important;
+  overflow: hidden !important;
 }
 
 #FEFBEoutputHeader {
-  width: 100%;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
-  height: 48px;
-  font-weight: bold;
-  font-size: 20px;
-  cursor: not-allowed;
+  width: 100% !important;
+  border: 1px solid #ccc !important;
+  background-color: #f1f1f1 !important;
+  height: 48px !important;
+  font-weight: bold !important;
+  font-size: 20px !important;
+  cursor: not-allowed !important;
 }
 
 #FEFBEoutput {
-  max-width: 100%;
+  max-width: 100% !important;
 }
 
 /* CSS for Forms & Input (When choosing HTML & CSS) */
-fieldset {
-  margin-top: 1rem;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
+.FEFBEfieldsets {
+  margin-top: 1rem !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 10px !important;
+  border-radius: 5px !important;
 }
-legend:hover {
-  cursor: pointer;
+.FEFBElegends:hover {
+  cursor: pointer !important;
 }
-.legend-siblings-hidden ~ * {
+.FEFBElegend-siblings-hidden ~ * {
   display: none;
 }
-label {
-  font-weight: bold;
+.FEFBElabels,
+.FEFBElegends {
+  font-weight: bold !important;
 }
-legend {
-  font-weight: bold;
+#FEFBEselectAppendStyle,
+#FEFBEchosenHTMLElement,
+.FEFBEinputs {
+  background-color: white !important;
+  width: 150px !important;
+  padding: 0.3rem !important;
+  border: 2px solid #ccc !important;
+  border-radius: 5px !important;
+  height: 40px !important;
+  font-size: 1rem !important;
 }
-select,
-input {
-  width: 200px;
-  padding: 0.3rem;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  height: 40px;
-  font-size: 1rem;
+#FEFBEselectAppendStyle {
+  cursor: pointer !important;
 }
-select {
-  cursor: pointer;
-}
-option {
-  cursor: pointer;
-}
-select {
-  width: 200px;
+.FEFBEoptions {
+  cursor: pointer !important;
 }
 
-.saveElements,
-.delElements {
-  color: white;
-  padding: 0.4rem;
-  border: 0;
-  border-radius: 5px;
-  font-size: 0.9;
-  font-weight: bold;
+.FEFBEsaveElements,
+.FEFBEdelElements {
+  color: white !important;
+  padding: 0.4rem !important;
+  border: 0 !important;
+  border-radius: 5px !important;
+  font-size: 0.9 !important;
+  font-weight: bold !important;
+}
+.FEFBEdelElements {
+  background-color: red !important;
+}
+.FEFBEsaveElements {
+  background-color: green !important;
 }
 
-.delElements {
-  background-color: red;
-}
-
-.saveElements {
-  background-color: green;
-}
-
-.saveElements:hover,
-.saveElements:focus,
-.delElements:hover,
-.delElements:focus {
-  cursor: pointer;
-  filter: brightness(133%);
+.FEFBEsaveElements:hover,
+.FEFBEsaveElements:focus,
+.FEFBEdelElements:hover,
+.FEFBEdelElements:focus {
+  cursor: pointer !important;
+  filter: brightness(133%) !important;
 }
 
 #FEFBEplus {
-  vertical-align: sub;
-  display: inline-block;
-  font-size: 1.9rem;
-  font-weight: bold;
-  width: 44px;
-  background-color: green;
-  padding: 0.3rem;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-  text-align: center;
+  vertical-align: sub !important;
+  display: inline-block !important;
+  font-size: 1.9rem !important;
+  font-weight: bold !important;
+  width: 44px !important;
+  background-color: green !important;
+  padding: 0.3rem !important;
+  border-radius: 5px !important;
+  cursor: pointer !important;
+  color: white !important;
+  text-align: center !important;
 }
 
 #FEFBEplus:hover,
 #FEFBEplus:focus {
-  filter: brightness(133%);
+  filter: brightness(133%) !important;
 }
 
 #FEFBEcheckbox {
-  vertical-align: middle;
-  height: 30px;
-  width: 30px;
+  vertical-align: middle !important;
+  height: 30px !important;
+  width: 30px !important;
+}
+
+/* Make active fieldset (element in HTML Tab) green so you know where you will insert next element in relation to. */
+.FEFBEactiveFieldset {
+  border: 3px solid green !important;
 }
 
 /* CSS Animation effect
 when copying CSS & HTML */
-.copied {
-  animation-name: copied;
-  animation-duration: 3s;
-  animation-iteration-count: 1;
-  animation-direction: normal;
+.FEFBEcopied {
+  animation-name: FEFBEcopied !important;
+  animation-duration: 3s !important;
+  animation-iteration-count: 1 !important;
+  animation-direction: normal !important;
 }
-@keyframes copied {
+@keyframes FEFBEcopied {
   from {
     opacity: 1;
     transform: translateX(0);

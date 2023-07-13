@@ -15,150 +15,135 @@
         <button class="FEFBEtabButtons" id="FEFBEcopyHTML">Copy HTML</button>
         <button class="FEFBEtabButtons" id="FEFBEcopyCSS">Copy CSS</button>
         <div id="FEFBEhtml">
-          <label>Smart Element Adding</label>
+          <label class="FEFBElabels">Smart Element Adding</label>
           <input type="checkbox" checked id="FEFBEcheckbox" />
+          <label class="FEFBElabels">Add Method:</label>
           <select id="FEFBEselectAppendStyle">
             <option value="">Choose Add Style</option>
-            <option value="append">Append</option>
+            <option value="append" selected>Append</option>
             <option value="appendChild">Append Child</option>
           </select>
-          <select id="FEFBEselectHTML">
-            <option value="" selected>Choose HTML</option>
-            <optgroup label="Head Elements">
-              <option value="head">head</option>
-              <option value="meta">meta</option>
-              <option value="link">link</option>
-              <option value="style">style</option>
-              <option value="script">script</option>
-              <option value="title">title</option>
-              <option value="base">base</option>
-            </optgroup>
-            <optgroup label="HTML5 Elements">
-              <option value="html">html</option>
-              <option value="body">body</option>
-              <option value="header">header</option>
-              <option value="nav">nav</option>
-              <option value="main">main</option>
-              <option value="article">article</option>
-              <option value="section">section</option>
-              <option value="aside">aside</option>
-              <option value="footer">footer</option>
-            </optgroup>
-            <optgroup label="Text Elements">
-              <option value="h1">h1</option>
-              <option value="h2">h2</option>
-              <option value="h3">h3</option>
-              <option value="h4">h4</option>
-              <option value="h5">h5</option>
-              <option value="h6">h6</option>
-              <option value="hgroup">hgroup</option>
-              <option value="p">p</option>
-              <option value="a">a</option>
-              <option value="span">span</option>
-              <option value="div">div</option>
-            </optgroup>
-            <optgroup label="Media Elements">
-              <option value="picture">picture</option>
-              <option value="img">img</option>
-              <option value="canvas">canvas</option>
-              <option value="caption">caption</option>
-              <option value="figcaption">figcaption</option>
-              <option value="figure">figure</option>
-              <option value="blockquote">blockquote</option>
-              <option value="source">source</option>
-              <option value="embed">embed</option>
-              <option value="audio">audio</option>
-              <option value="video">video</option>
-              <option value="track">track</option>
-              <option value="map">map</option>
-              <option value="area">area</option>
-            </optgroup>
-            <optgroup label="Form Elements">
-              <option value="form">form</option>
-              <option value="fieldset">fieldset</option>
-              <option value="legend">legend</option>
-              <option value="label">label</option>
-              <option value="input">input</option>
-              <option value="select">select</option>
-              <option value="optgroup">optgroup</option>
-              <option value="option">option</option>
-              <option value="datalist">datalist</option>
-              <option value="textarea">textarea</option>
-              <option value="button">button</option>
-              <option value="progress">progress</option>
-              <option value="meter">meter</option>
-              <option value="output">output</option>
-            </optgroup>
-            <optgroup label="Table Elements">
-              <option value="table">table</option>
-              <option value="thead">thead</option>
-              <option value="th">th</option>
-              <option value="tbody">tbody</option>
-              <option value="tr">tr</option>
-              <option value="td">td</option>
-              <option value="tfoot">tfoot</option>
-              <option value="col">col</option>
-              <option value="colgroup">colgroup</option>
-            </optgroup>
-            <optgroup label="List Elements">
-              <option value="menu">menu</option>
-              <option value="ul">ul</option>
-              <option value="ol">ol</option>
-              <option value="li">li</option>
-              <option value="dl">dl</option>
-              <option value="dt">dt</option>
-              <option value="dd">dd</option>
-              <option value="details">details</option>
-              <option value="summary">summary</option>
-            </optgroup>
-            <optgroup label="Text Decorations">
-              <option value="abbr">abbr</option>
-              <option value="address">address</option>
-              <option value="b">b</option>
-              <option value="em">em</option>
-              <option value="i">i</option>
-              <option value="strong">strong</option>
-              <option value="mark">mark</option>
-              <option value="s">s</option>
-              <option value="dfn">dfn</option>
-              <option value="samp">samp</option>
-              <option value="small">small</option>
-              <option value="sub">sub</option>
-              <option value="sup">sup</option>
-              <option value="u">u</option>
-              <option value="q">q</option>
-              <option value="cite">cite</option>
-              <option value="del">del</option>
-              <option value="bdi">bdi</option>
-              <option value="bdo">bdo</option>
-              <option value="ins">ins</option>
-              <option value="kbd">kbd</option>
-              <option value="pre">pre</option>
-              <option value="code">code</option>
-            </optgroup>
-            <optgroup label="Ruby Elements">
-              <option value="rp">rp</option>
-              <option value="rt">rt</option>
-              <option value="ruby">ruby</option>
-            </optgroup>
-            <optgroup label="Break Elements">
-              <option value="br">br</option>
-              <option value="hr">hr</option>
-              <option value="iframe">iframe</option>
-              <option value="wbr">wbr</option>
-            </optgroup>
-            <optgroup label="Special Elements">
-              <option value="data">data</option>
-              <option value="dialog">dialog</option>
-              <option value="noscript">noscript</option>
-              <option value="object">object</option>
-              <option value="slot">slot</option>
-              <option value="template">template</option>
-              <option value="time">time</option>
-              <option value="var">var</option>
-            </optgroup>
-          </select>
+          <label class="FEFBElabels">Element:</label>
+          <input
+            type="text"
+            list="FEFBEselectHTML"
+            id="FEFBEchosenHTMLElement"
+            placeholder="Write an element" />
+          <datalist id="FEFBEselectHTML">
+            <option class="FEFBEoptions" value="a"></option>
+            <option class="FEFBEoptions" value="abbr"></option>
+            <option class="FEFBEoptions" value="address"></option>
+            <option class="FEFBEoptions" value="area"></option>
+            <option class="FEFBEoptions" value="article"></option>
+            <option class="FEFBEoptions" value="aside"></option>
+            <option class="FEFBEoptions" value="audio"></option>
+            <option class="FEFBEoptions" value="b"></option>
+            <option class="FEFBEoptions" value="base"></option>
+            <option class="FEFBEoptions" value="bdi"></option>
+            <option class="FEFBEoptions" value="bdo"></option>
+            <option class="FEFBEoptions" value="blockquote"></option>
+            <option class="FEFBEoptions" value="body"></option>
+            <option class="FEFBEoptions" value="br"></option>
+            <option class="FEFBEoptions" value="button"></option>
+            <option class="FEFBEoptions" value="canvas"></option>
+            <option class="FEFBEoptions" value="caption"></option>
+            <option class="FEFBEoptions" value="cite"></option>
+            <option class="FEFBEoptions" value="code"></option>
+            <option class="FEFBEoptions" value="col"></option>
+            <option class="FEFBEoptions" value="colgroup"></option>
+            <option class="FEFBEoptions" value="data"></option>
+            <option class="FEFBEoptions" value="datalist"></option>
+            <option class="FEFBEoptions" value="dd"></option>
+            <option class="FEFBEoptions" value="del"></option>
+            <option class="FEFBEoptions" value="details"></option>
+            <option class="FEFBEoptions" value="dfn"></option>
+            <option class="FEFBEoptions" value="dialog"></option>
+            <option class="FEFBEoptions" value="div"></option>
+            <option class="FEFBEoptions" value="dl"></option>
+            <option class="FEFBEoptions" value="dt"></option>
+            <option class="FEFBEoptions" value="em"></option>
+            <option class="FEFBEoptions" value="embed"></option>
+            <option class="FEFBEoptions" value="fieldset"></option>
+            <option class="FEFBEoptions" value="figcaption"></option>
+            <option class="FEFBEoptions" value="figure"></option>
+            <option class="FEFBEoptions" value="footer"></option>
+            <option class="FEFBEoptions" value="form"></option>
+            <option class="FEFBEoptions" value="h1"></option>
+            <option class="FEFBEoptions" value="h2"></option>
+            <option class="FEFBEoptions" value="h3"></option>
+            <option class="FEFBEoptions" value="h4"></option>
+            <option class="FEFBEoptions" value="h5"></option>
+            <option class="FEFBEoptions" value="h6"></option>
+            <option class="FEFBEoptions" value="head"></option>
+            <option class="FEFBEoptions" value="header"></option>
+            <option class="FEFBEoptions" value="hgroup"></option>
+            <option class="FEFBEoptions" value="hr"></option>
+            <option class="FEFBEoptions" value="html"></option>
+            <option class="FEFBEoptions" value="i"></option>
+            <option class="FEFBEoptions" value="iframe"></option>
+            <option class="FEFBEoptions" value="img"></option>
+            <option class="FEFBEoptions" value="input"></option>
+            <option class="FEFBEoptions" value="ins"></option>
+            <option class="FEFBEoptions" value="kbd"></option>
+            <option class="FEFBEoptions" value="label"></option>
+            <option class="FEFBEoptions" value="legend"></option>
+            <option class="FEFBEoptions" value="li"></option>
+            <option class="FEFBEoptions" value="link"></option>
+            <option class="FEFBEoptions" value="main"></option>
+            <option class="FEFBEoptions" value="map"></option>
+            <option class="FEFBEoptions" value="mark"></option>
+            <option class="FEFBEoptions" value="meta"></option>
+            <option class="FEFBEoptions" value="meter"></option>
+            <option class="FEFBEoptions" value="nav"></option>
+            <option class="FEFBEoptions" value="noscript"></option>
+            <option class="FEFBEoptions" value="object"></option>
+            <option class="FEFBEoptions" value="ol"></option>
+            <option class="FEFBEoptions" value="optgroup"></option>
+            <option class="FEFBEoptions" value="option"></option>
+            <option class="FEFBEoptions" value="output"></option>
+            <option class="FEFBEoptions" value="p"></option>
+            <option class="FEFBEoptions" value="param"></option>
+            <option class="FEFBEoptions" value="picture"></option>
+            <option class="FEFBEoptions" value="pre"></option>
+            <option class="FEFBEoptions" value="progress"></option>
+            <option class="FEFBEoptions" value="q"></option>
+            <option class="FEFBEoptions" value="rp"></option>
+            <option class="FEFBEoptions" value="rt"></option>
+            <option class="FEFBEoptions" value="ruby"></option>
+            <option class="FEFBEoptions" value="s"></option>
+            <option class="FEFBEoptions" value="samp"></option>
+            <option class="FEFBEoptions" value="script"></option>
+            <option class="FEFBEoptions" value="section"></option>
+            <option class="FEFBEoptions" value="select"></option>
+            <option class="FEFBEoptions" value="slot"></option>
+            <option class="FEFBEoptions" value="small"></option>
+            <option class="FEFBEoptions" value="source"></option>
+            <option class="FEFBEoptions" value="span"></option>
+            <option class="FEFBEoptions" value="strong"></option>
+            <option class="FEFBEoptions" value="style"></option>
+            <option class="FEFBEoptions" value="sub"></option>
+            <option class="FEFBEoptions" value="summary"></option>
+            <option class="FEFBEoptions" value="sup"></option>
+            <option class="FEFBEoptions" value="table"></option>
+            <option class="FEFBEoptions" value="tbody"></option>
+            <option class="FEFBEoptions" value="td"></option>
+            <option class="FEFBEoptions" value="template"></option>
+            <option class="FEFBEoptions" value="textarea"></option>
+            <option class="FEFBEoptions" value="tfoot"></option>
+            <option class="FEFBEoptions" value="th"></option>
+            <option class="FEFBEoptions" value="thead"></option>
+            <option class="FEFBEoptions" value="time"></option>
+            <option class="FEFBEoptions" value="title"></option>
+            <option class="FEFBEoptions" value="tr"></option>
+            <option class="FEFBEoptions" value="track"></option>
+            <option class="FEFBEoptions" value="u"></option>
+            <option class="FEFBEoptions" value="ul"></option>
+            <option class="FEFBEoptions" value="var"></option>
+            <option class="FEFBEoptions" value="video"></option>
+            <option class="FEFBEoptions" value="wbr"></option>
+          </datalist>
           <span id="FEFBEplus">+</span>
+          <hr />
         </div>
         <div id="FEFBEcss">CSS</div>
       </div>
