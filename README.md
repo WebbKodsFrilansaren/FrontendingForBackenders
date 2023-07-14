@@ -4,6 +4,16 @@ Simple GUI for adding HTML elements and stylizing their CSS code for faster and 
 
 ## Progress (Updates)
 
+- 2023-07-14
+
+  - Third commit(!). Turns out I tried using #document and creating a new HTMLDocument object to insert into an `<iframe>` element. Turns out that already has a #document created without needing to create it with JavaScript. Then I tried to attach the `new CSSStylesheet()` to it. Turns out I could not do that because it is only allowed with shadowDom / #shadow-root which does not work for me. At least I am not smart enough to make it work.
+
+  - Today I tried using `<iframe>` but it did not work. So, I "Discarded all changes" for the first time as code n0_0b that I am. However, what I did manage to fix was the "Copy CSS" work now where it will filter out the `#FEFBEoutput :is()` part of each selector using regex: `const regex = /#FEFBEoutput :is\(([^)]+)\)\s*({[^}]+})/g;`. I will 100% admit: chatGPT3.5 helped me there since I hate having to think about how to use the regex. I know what I wanna do so I ask for help. By the way, I have no real clue why specifically `#FEFBEout :is(<insert real selector here>)` works. Actually, I used `#FEFBEoutput *:is(<real selector here)` but for some reason, the \* was removed by the CSS processing or whatever it was. This made duplicates of selectors when in fact just new styles should've been changed or added to that same selector. Fixed now though.
+
+  - I should be able to filter out the `<data-XXX=Y>` elements from the innerHTML that is used when extracting the HTML and the button "Copy HTML" is used by the user. Here I am thinking of DOMParser to parse it as regular HTML again from the extracted string and just querySelectAll `[data-]` elements and remove those attributes and then parse the HTML back to a string again before finishing the copying to Clipboard.
+
+  - _NEXT STEPS/TODOS:_ Because I spent a few hours today trying to get #document inside of an iframe element to work but did not manage to attach the second stylesheet to it, I did not have time to work on clicking on fieldset classes to define where from to insert next added element based on active fieldset class element. Will work on that next time! Take Care & have An Awesome Weekend! ^\_^
+
 - 2023-07-13
 
   - Second commit(?). Learned the "painful" way of realizing shadowDOM/shadowRoot does not really provide you any insights of whose parentNode is whom when you querySelect(All) inside of it. Even if the intialized shadowRoot object does show parents and siblings, it does not work when you start queryselecting inside of that object for some reason. So, I skipped using shadowDOM.
@@ -20,7 +30,7 @@ Simple GUI for adding HTML elements and stylizing their CSS code for faster and 
 
   - You now write what element you want to add. I have also prepared and will implement so when you write id and classes, you will not be able to apply those already being used by the application itself. Checkout const arrays `reservedClasses` and `reservedIds`.
 
-  - NEXT STEPS/TODOS: Complete implementation of clicking on what element (marking it green) where you want to add (add before or after on sibling level, before or after on parent level, add on children). This will also make good use of QuerySelecting green fieldset. I also think I will add automatic generated id and class names that can be chosen when adding CSS rules later under the CSS tab.
+  - _NEXT STEPS/TODOS:_ Complete implementation of clicking on what element (marking it green) where you want to add (add before or after on sibling level, before or after on parent level, add on children). This will also make good use of QuerySelecting green fieldset. I also think I will add automatic generated id and class names that can be chosen when adding CSS rules later under the CSS tab.
 
 - 2023-07-11
 

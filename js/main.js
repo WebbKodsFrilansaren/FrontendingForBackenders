@@ -28,7 +28,6 @@ window.addEventListener("DOMContentLoaded", () => {
   /*********************************************
   GLOBAL VARIABLES AFTER DOMContentLoaded
   *********************************************/
-  const output = document.getElementById("FEFBEoutput"); // Add & append all new elements here
   // "Copy HTML" & "Copy CSS"
   const copyHTML = document.getElementById("FEFBEcopyHTML");
   const copyCSS = document.getElementById("FEFBEcopyCSS");
@@ -82,7 +81,19 @@ window.addEventListener("DOMContentLoaded", () => {
       .map((rule) => rule.cssText)
       .join("\n\n");
     const msg = "CSS Copied!";
-    copyCustomCode(e, code, msg);
+
+    // Extract the true CSS code | #FEFBEoutput :is(<selector>) { CSS }
+    // Thus becomes: <selector> { All CSS for that selector }
+    const regex = /#FEFBEoutput :is\(([^)]+)\)\s*({[^}]+})/g;
+    let match;
+    let extractedCSS = "";
+    while ((match = regex.exec(code)) !== null) {
+      extractedCSS += match[1];
+      extractedCSS += " ";
+      extractedCSS += match[2];
+      extractedCSS += "\n\n";
+    }
+    copyCustomCode(e, extractedCSS, msg);
   });
   // Copy to Clipboard all HTML from "OUTPUTs" ShadowDOM
   copyHTML.addEventListener("click", (e) => {
@@ -145,11 +156,18 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   // TODO: Delete when done, used for testing purposes
+  setCSSRuleOutputSheet("main", "border", "5px solid grey");
   setCSSRuleOutputSheet("nav", "border", "5px solid pink");
+  setCSSRuleOutputSheet("nav:hover", "height", "25px");
+  setCSSRuleOutputSheet("main > nav", "border", "5px solid purple");
+  setCSSRuleOutputSheet(".test", "height", "100px");
+  setCSSRuleOutputSheet("#test", "height", "200px");
   setCSSRuleOutputSheet("ul", "border", "4px solid black");
   setCSSRuleOutputSheet("li", "border", "3px solid yellow");
+  setCSSRuleOutputSheet("ul > li", "margin", "1rem");
   setCSSRuleOutputSheet("a", "border", "3px solid red");
   setCSSRuleOutputSheet("p", "border", "10px solid purple");
+  console.log(outputStyleSheet);
 
   // END OF "DOMCONTENTLOADED" Event Listening Function
 }); // END OF "DOMCONTENTLOADED" Event Listening Function

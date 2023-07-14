@@ -7,7 +7,6 @@ import { cssRulesWithVendor, cssRulesAllArray } from "../data/variables.js";
 // FUNCTION: "setCSSRuleMainSheet" - change CSS in non-shadowDOM
 // The function was really just proof-of-concept and is not fully developed.
 // Find and set specific CSS Rule in the main stylesheet (css/styles.css)
-// TODO MAYBE - LET ME KNOW HOW?: It conflicts with shadowDOM because <div id="FEFBEoutput"></div> is inside of non-ShadowDOM-elements?
 function setCSSRuleMainSheet(selector, styleName, styleValue) {
   // .rules is an older version
   const mainRules = mainStyleSheet.cssRules || mainStyleSheet.rules;
@@ -23,11 +22,11 @@ function setCSSRuleMainSheet(selector, styleName, styleValue) {
 }
 
 // FUNCTION: "setCSSRuleOutputSheet" - change CSS in shadowDOM
-// Find and set specific CSS Rule in the Output stylesheet (also stored in json/data.json)
+// Find and set specific CSS Rule in the Output stylesheet (also stored in json/data.json(?))
 function setCSSRuleOutputSheet(selector, styleName, styleValue) {
   // .rules is an older version
   const outputRules = outputStyleSheet.cssRules || outputStyleSheet.rules;
-  selector = "#FEFBEoutput *:is(" + selector + ")";
+  selector = "#FEFBEoutput :is(" + selector + ")";
 
   // Prepare for Looping through
   let l = outputRules.length;
