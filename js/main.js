@@ -94,8 +94,24 @@ window.addEventListener("DOMContentLoaded", () => {
   // Copy to Clipboard all HTML from "OUTPUTs" ShadowDOM
   copyHTML.addEventListener("click", (e) => {
     const code = document.getElementById("FEFBEoutput").innerHTML;
+    // Parse the innerHTML code to remove all [data-] attributes first.
+    const parser = new DOMParser();
+    const parsedDOM = parser.parseFromString(code, "text/html");
+
+    // Then find all elements and remove attributes starting with "data-"
+    const elements = parsedDOM.querySelectorAll("*");
+    elements.forEach((element) => {
+      Array.from(element.attributes).forEach((attr) => {
+        if (attr.name.startsWith("data-")) {
+          element.removeAttribute(attr.name);
+        }
+      });
+    });
+
+    // Get the modified innerHTML and send it off to Clipboard
+    const modifiedCode = parsedDOM.body.innerHTML;
     const msg = "HTML Copied!";
-    CopyFunctions.copyCustomCode(e, code, msg);
+    CopyFunctions.copyCustomCode(e, modifiedCode, msg);
   });
 
   /*************************************
@@ -322,8 +338,6 @@ window.addEventListener("DOMContentLoaded", () => {
   CSSFunctions.setCSSRuleOutputSheet("a", "border", "3px solid red");
   CSSFunctions.setCSSRuleOutputSheet("p", "border", "10px solid purple");
   console.log(outputStyleSheet);
-
-  Functions.elAttr(document.createElement("p"), "class=test|id=test2");
 
   // END OF "DOMCONTENTLOADED" Event Listening Function
 }); // END OF "DOMCONTENTLOADED" Event Listening Function
