@@ -4,6 +4,16 @@ Simple GUI for adding HTML elements and stylizing their CSS code for faster and 
 
 ## Progress (Updates)
 
+- 2023-07-17
+
+  - Fourth commit(!). All module JS files now have objects with either variables and/or functions. This way, I will not have to add import and export for every new single function. Instead, I just call that added function within that object as the entire object is exported from each module JS file. Very convenient.
+
+  - You can now click on where you want to insert the next element. It also checks that you have chosen one. If you remove the chosen one, you will not be able to add a new element until you have clicked/picked a new element to insert based from (unless it is the first one in the list). This is not updated in the `OUTPUT` element as of yet, so it is inconsistent in the final behavior as such. This will be fixed next. I have also implemented a new `data-belongstoelementid=X` attribute which will help to identify correct element in both HTML Tab and in the `OUTPUT` element.
+
+  - Event Delegation has been implemented for the HTML Tab and the CSS Tab where it listens for two things that you would use/do: click and pressing Enter. Fewer event listeners seem to be better for performance. I just need to be aware and careful with the event propagation. I had the issue where pressing enter within a text input caused a button to be clicked and `e.preventDefault();` had no effect on it. You need to create the `button` element as a `type="button"` for that behavior to stop. Now when I press enter it will not cause a click because that only happens to buttons assigned `type="submit"` which is standard type when creating a `button` element, apparently.
+
+  - _NEXT STEPS/TODOS:_ Create consistency between elements added in the HTML Tab and the OUTPUT. Also add more options in the "Add Method:" dropdown menu. What are needed are: Insert Before/After Chosen Element on the same level (Sibling), Insert Before/After Chosen Element's one level under (Last/First Child), Insert Before/After Chosen Element's Parent. Last one does not work with just `append()`. It should add like a sibling even if the chosen element has childNodes.
+
 - 2023-07-14
 
   - Third commit(!). Turns out I tried using #document and creating a new HTMLDocument object to insert into an `<iframe>` element. Turns out that already has a #document created without needing to create it with JavaScript. Then I tried to attach the `new CSSStylesheet()` to it. Turns out I could not do that because it is only allowed with shadowDom / #shadow-root which does not work for me. At least I am not smart enough to make it work.
