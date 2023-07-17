@@ -100,13 +100,16 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Then find all elements and remove attributes starting with "data-"
     const elements = parsedDOM.querySelectorAll("*");
+    // Inside of each element...
     elements.forEach((element) => {
+      // ...we create an array of all attributes ...
       Array.from(element.attributes).forEach((attr) => {
+        // ... and we remove them if their name starts with "data-"
         if (attr.name.startsWith("data-")) {
           element.removeAttribute(attr.name);
         }
       });
-    });
+    }); // Done!
 
     // Get the modified innerHTML and send it off to Clipboard
     const modifiedCode = parsedDOM.body.innerHTML;

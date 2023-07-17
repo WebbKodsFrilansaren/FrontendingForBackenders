@@ -114,7 +114,7 @@ const HTMLFunctions = {
     ]);
 
     // Id <input text>
-    const label1 = Functions.elCreate("label", [], "id");
+    const label1 = Functions.elCreate("label", ["class", "FEFBElabels"], "id");
     counters.idCounter = Functions.increaseCounter(counters.idCounter);
     const createInputForId = Functions.elCreate("input", [
       "type",
@@ -130,7 +130,11 @@ const HTMLFunctions = {
     ]);
 
     // class <input text>
-    const label2 = Functions.elCreate("label", [], "class");
+    const label2 = Functions.elCreate(
+      "label",
+      ["class", "FEFBElabels"],
+      "class"
+    );
     counters.classCounter = Functions.increaseCounter(counters.classCounter);
     const createInputForClass = Functions.elCreate("input", [
       "class",
@@ -157,7 +161,11 @@ const HTMLFunctions = {
 
     // Check if textContent should be added by checking array of compatible elements
     if (elementsWithTextContent.includes(element)) {
-      const label3 = Functions.elCreate("label", [], "textContent");
+      const label3 = Functions.elCreate(
+        "label",
+        ["class", "FEFBElabels"],
+        "textContent"
+      );
       counters.textContentCounter = Functions.increaseCounter(
         counters.textContentCounter
       );
@@ -176,7 +184,11 @@ const HTMLFunctions = {
     }
     // Check if href should be added by checking array of compatible elemnts
     if (elementsWithHrefAttribute.includes(element)) {
-      const label4 = Functions.elCreate("label", [], "href");
+      const label4 = Functions.elCreate(
+        "label",
+        ["class", "FEFBElabels"],
+        "href"
+      );
       counters.hrefCounter = Functions.increaseCounter(counters.hrefCounter);
       const createInputHref = Functions.elCreate("input", [
         "type",
@@ -198,7 +210,11 @@ const HTMLFunctions = {
 
     // Check if src should be added by checking array of compatible elemnts
     if (elementsWithSrcAttribute.includes(element)) {
-      const label5 = Functions.elCreate("label", [], "src");
+      const label5 = Functions.elCreate(
+        "label",
+        ["class", "FEFBElabels"],
+        "src"
+      );
       counters.srcCounter = Functions.increaseCounter(counters.srcCounter);
       const createInputSrc = Functions.elCreate("input", [
         "type",
@@ -218,7 +234,11 @@ const HTMLFunctions = {
       createFieldset.append(createInputSrc);
     }
 
-    const label6 = Functions.elCreate("label", [], "Other");
+    const label6 = Functions.elCreate(
+      "label",
+      ["class", "FEFBElabels"],
+      "Other"
+    );
     counters.otherAttributesCounter = Functions.increaseCounter(
       counters.otherAttributesCounter
     );

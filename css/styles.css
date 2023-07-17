@@ -43,6 +43,8 @@ body {
 #FEFBEcss {
   background-color: white !important;
   padding: 1rem !important;
+  overflow-y: auto;
+  height: 90vh;
 }
 
 #FEFBEcss {
