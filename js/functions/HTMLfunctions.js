@@ -14,6 +14,7 @@ const HTMLFunctions = {
   // Add New HTML element to the "shadowDOM"
   addElementToShadowDOM: function (element, appendType, smartAddingchecked) {
     // Grab shadowDOM & create element
+    const addMethodList = document.getElementById("FEFBEselectAppendStyle");
     const output = document.getElementById("FEFBEoutput");
     const createEl = document.createElement(element);
     counters.elementCounter = Functions.increaseCounter(
@@ -23,48 +24,59 @@ const HTMLFunctions = {
 
     // Now check whether any elements exists first at all
     if (output.firstChild == null) {
-      if (appendType == "append") {
-        output.append(createEl);
-      }
-      if (appendType == "appendChild") {
-        output.appendChild(createEl);
-      }
+      addMethodList.selectedIndex = 0;
+      output.append(createEl);
+      // Set what is current active output element so it is consistent with the greenlighted one in the HTML Tab.
+      createEl.setAttribute("data-outputcurrentactive", "yes");
     } // Grab the last item no matter its level using querySelectorAll data-elementid and reduce it down to the largest id number
     else {
-      // Get all elements with data-elementid attribute
-      const elements = Array.from(output.querySelectorAll("[data-elementid]"));
-
-      if (elements.length > 0) {
-        // Find the element with the highest data-elementid value by using reduce
-        const maxIdElement = elements.reduce((prev, current) => {
-          const prevId = parseInt(prev.getAttribute("data-elementid"));
-          const currId = parseInt(current.getAttribute("data-elementid"));
-          // Just always return the biggest number since two numbers never can be of equal value
-          return prevId > currId ? prev : current;
-        });
-
-        // Then append after sibling element
-        if (appendType === "append") {
-          maxIdElement.after(createEl);
-        } // Or append as a first child element
-        else if (appendType === "appendChild") {
-          maxIdElement.appendChild(createEl);
-        }
+      const currentActiveOutputElement = document.querySelector(
+        "[data-outputcurrentactive='yes']"
+      );
+      if (appendType == "root") {
+        output.append(createEl);
       }
+
+      if (appendType == "siblingafter") {
+        currentActiveOutputElement.after(createEl);
+      }
+
+      if (appendType == "siblingbefore") {
+        currentActiveOutputElement.before(createEl);
+      }
+
+      if (appendType == "appendFirst") {
+        currentActiveOutputElement.insertAdjacentElement(
+          "afterbegin",
+          createEl
+        );
+      }
+
+      if (appendType == "appendLast") {
+        currentActiveOutputElement.append(createEl);
+      }
+
+      // Then switch which is Current Active OUTPUT Element!
+      createEl.setAttribute("data-outputcurrentactive", "yes");
+      currentActiveOutputElement.removeAttribute("data-outputcurrentactive");
     }
-    // After adding element, then check if smart adding was checked
+
+    // Also change green-lighted fieldset to correct one!
+    const correctGreenFieldSetId = createEl.dataset.elementid;
+
+    // Then add element to the HTML Tab (the form with fieldset element)
+    HTMLFunctions.addElementToHTMLTab(element, correctGreenFieldSetId);
+
+    // Finally, after adding element, then check if smart adding was checked
     // If checked, change selected based on what previously added to speed up common addings
     if (smartAddingchecked == true) {
       HTMLFunctions.smartAddingChanger(element, appendType);
     }
-
-    // Finally, add element to the HTML Tab
-    HTMLFunctions.addElementToHTMLTab(element);
   },
 
   // FUNCTION: "addElementToHTMLTab"
   // Add added HTML element to list of added HTML elements to change its parameters
-  addElementToHTMLTab: function (element) {
+  addElementToHTMLTab: function (element, correctGreenId) {
     const htmlTab = document.getElementById("FEFBEhtml");
     const numberOfAddedElements =
       document.querySelectorAll("[data-fieldsetid]");
@@ -127,6 +139,8 @@ const HTMLFunctions = {
       counters.elementCounter,
       "placeholder",
       "Without #",
+      "data-attributetype",
+      "id",
     ]);
 
     // class <input text>
@@ -149,6 +163,8 @@ const HTMLFunctions = {
       counters.elementCounter,
       "placeholder",
       "Without .",
+      "data-attributetype",
+      "class",
     ]);
 
     // Appending all
@@ -178,6 +194,8 @@ const HTMLFunctions = {
         counters.textContentCounter,
         "data-belongstoelementid",
         counters.elementCounter,
+        "data-attributetype",
+        "textContent",
       ]);
       createFieldset.appendChild(label3);
       createFieldset.append(createInputTextContent);
@@ -203,9 +221,39 @@ const HTMLFunctions = {
         counters.elementCounter,
         "placeholder",
         'Without ""',
+        "data-attributetype",
+        "href",
       ]);
       createFieldset.appendChild(label4);
       createFieldset.append(createInputHref);
+    }
+
+    // If element is <img> then add `alt` input field
+    if (element == "img") {
+      const altLabel = Functions.elCreate(
+        "label",
+        ["class", "FEFBElabels"],
+        "alt"
+      );
+      counters.altCounter = Functions.increaseCounter(counters.altCounter);
+      const createInputAlt = Functions.elCreate("input", [
+        "type",
+        "text",
+        "title",
+        "alt: Write alternative image description here",
+        "class",
+        "FEFBEinputs",
+        "data-altid",
+        counters.altCounter,
+        "data-belongstoelementid",
+        counters.elementCounter,
+        "placeholder",
+        'Without ""',
+        "data-attributetype",
+        "alt",
+      ]);
+      createFieldset.appendChild(altLabel);
+      createFieldset.append(createInputAlt);
     }
 
     // Check if src should be added by checking array of compatible elemnts
@@ -229,6 +277,8 @@ const HTMLFunctions = {
         counters.elementCounter,
         "placeholder",
         'Without ""',
+        "data-attributetype",
+        "src",
       ]);
       createFieldset.appendChild(label5);
       createFieldset.append(createInputSrc);
@@ -255,6 +305,8 @@ const HTMLFunctions = {
       counters.elementCounter,
       "placeholder",
       "attr1=val1|attr2=val2",
+      "data-attributetype",
+      "other",
     ]);
     createFieldset.appendChild(label6);
     createFieldset.append(createInputOtherAttributes);
@@ -274,8 +326,10 @@ const HTMLFunctions = {
         counters.deleteHTMLBtnCounter,
         "data-belongstoelementid",
         counters.elementCounter,
+        "title",
+        "Remove element!",
       ],
-      "🗑️DELETE"
+      " 🗑️ "
     );
 
     counters.saveHTMLBtnCounter = Functions.increaseCounter(
@@ -292,21 +346,62 @@ const HTMLFunctions = {
         counters.saveHTMLBtnCounter,
         "data-belongstoelementid",
         counters.elementCounter,
+        "title",
+        "Apply all fields!",
       ],
-      "✔️SAVE"
+      " ✔️ "
     );
 
     createFieldset.append(delBtnEl);
     createFieldset.append(saveBtnEl);
 
-    // Finally append the entire <Form>
+    // Finally append the entire <Form> in HTML Tab
+    // First element in OUTPUT meaning it has 0 children?
     if (firstTime) {
       htmlTab.append(createForm);
-    } else {
+    }
+    // Otherwise check which "Add Method:" that was chosen.
+    else {
       // Grab "active" (green fieldiset)
       const grabGreenFieldset = document.querySelector(".FEFBEactiveFieldset");
-      // And insert after its parentNode (the Form it is inside of)
-      grabGreenFieldset.parentNode.after(createForm);
+      const grabHTMLTab = document.getElementById("FEFBEhtml");
+      // Check "Add Method:" (appendType) and insert in correct accordingly.
+      const appendType = document.getElementById(
+        "FEFBEselectAppendStyle"
+      ).value;
+
+      if (appendType == "root") {
+        // And insert after its parentNode (the Form it is inside of)
+        grabHTMLTab.append(createForm);
+      }
+
+      if (appendType == "siblingbefore") {
+        // And insert after its parentNode (the Form it is inside of)
+        grabGreenFieldset.parentNode.before(createForm);
+        console.log("Sibling BEFORE?");
+      }
+
+      if (appendType == "siblingafter") {
+        // And insert after its parentNode (the Form it is inside of)
+        grabGreenFieldset.parentNode.after(createForm);
+        console.log("Sibling AFTER?");
+      }
+
+      if (appendType == "appendFirst") {
+        // And insert after its parentNode (the Form it is inside of)
+        grabGreenFieldset.parentNode.after(createForm);
+      }
+
+      if (appendType == "appendLast") {
+        // And insert after its parentNode (the Form it is inside of)
+        grabGreenFieldset.parentNode.after(createForm);
+      }
+
+      grabGreenFieldset.classList.remove("FEFBEactiveFieldset");
+      const grabCorrectNewGreenField = document.querySelector(
+        `[data-fieldsetid="${correctGreenId}"]`
+      );
+      grabCorrectNewGreenField.classList.add("FEFBEactiveFieldset");
     }
   },
 
@@ -317,13 +412,13 @@ const HTMLFunctions = {
 
     // Change nav to ul since that is common
     if (htmlList.value == "nav") {
-      appendList.selectedIndex = 2;
+      appendList.selectedIndex = 4;
       htmlList.value = "ul";
       return;
     }
     // Change ul/ol to li since that is common
     if (htmlList.value == "ul" || htmlList.value == "ol") {
-      appendList.selectedIndex = 2;
+      appendList.selectedIndex = 4;
       htmlList.value = "li";
       return;
     }

@@ -11,6 +11,7 @@ const counters = {
   saveCSSBtnCounter: 0,
   deleteCSSBtnCounter: 0,
   textContentCounter: 0,
+  altCounter: 0,
   hrefCounter: 0,
   srcCounter: 0,
   idCounter: 0,
@@ -24,6 +25,16 @@ const counters = {
   datalistCounter: 0,
 };
 
+// "singleAttributesHTMLTab" used by input fields "id","class","src","href" since they
+//  have exact same control flow to change/add/remove them from chosen HTML elements.
+const singleAttributesHTMLTab = {
+  id: "id",
+  class: "class",
+  href: "href",
+  src: "src",
+  alt: "alt",
+};
+
 // Stylesheets, main is the non-shadowDOM one whereas
 // the output is the stylesheet ONLY for the shadowDOM.
 const mainStyleSheet = document.styleSheets[0];
@@ -32,6 +43,26 @@ document.adoptedStyleSheets = [outputStyleSheet];
 
 // Array: Reserved classes that can be used in selectors (they are used by GUI)
 const reservedClasses = [
+  "FEFBEtabButtons",
+  "FEFBEtabButtons:hover",
+  "FEFBEtabButtons:focus",
+  "FEFBEtabButtons.active",
+  "FEFBEfieldsets",
+  "FEFBElegends:hover",
+  "FEFBElegend-siblings-hidden",
+  "FEFBElegend-siblings-hidden ~ *",
+  "FEFBElabels",
+  "FEFBElegends",
+  "FEFBEinputs",
+  "FEFBEoptions",
+  "FEFBEsaveElements",
+  "FEFBEdelElements",
+  "FEFBEsaveElements:hover",
+  "FEFBEsaveElements:focus",
+  "FEFBEactiveFieldset",
+  "FEFBEcopied",
+  "FEFBEactiveOutputElement",
+  ".FEFBEactiveOutputElement",
   ".FEFBEtabButtons",
   ".FEFBEtabButtons:hover",
   ".FEFBEtabButtons:focus",
@@ -53,6 +84,8 @@ const reservedClasses = [
 ];
 const reservedIds = [
   "#FEFBEseparator",
+  "#FEFBEimportant",
+  "#FEFBEresetAll",
   "#FEFBEeditor",
   "#FEFBEhtml",
   "#FEFBEcss",
@@ -66,7 +99,25 @@ const reservedIds = [
   "#FEFBEplus:hover",
   "#FEFBEplus:focus",
   "#FEFBEcheckbox",
+  "FEFBEseparator",
+  "FEFBEeditor",
+  "FEFBEhtml",
+  "FEFBEcss",
+  "FEFBEverticalLine",
+  "FEFBEoutputHeader",
+  "FEFBEoutput",
+  "FEFBEselectAppendStyle",
+  "FEFBEchosenHTMLElement",
+  "FEFBEselectAppendStyle",
+  "FEFBEplus",
+  "FEFBEplus:hover",
+  "FEFBEplus:focus",
+  "FEFBEcheckbox",
+  "FEFBEresetAll",
+  "FEFBEimportant",
 ];
+
+const reservedAttributes = ["id", "class", "alt", "type"];
 
 // Array: All HTML Elements that support .textContent
 const elementsWithTextContent = [
@@ -118,7 +169,6 @@ const elementsWithTextContent = [
   "main",
   "mark",
   "meter",
-  "nav",
   "noscript",
   "object",
   "optgroup",
@@ -151,7 +201,6 @@ const elementsWithTextContent = [
   "th",
   "time",
   "title",
-  "tr",
   "track",
   "u",
   "var",
@@ -1345,4 +1394,6 @@ export {
   mainStyleSheet,
   reservedClasses,
   reservedIds,
+  singleAttributesHTMLTab,
+  reservedAttributes,
 };

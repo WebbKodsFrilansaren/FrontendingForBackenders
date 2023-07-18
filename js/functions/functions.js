@@ -51,6 +51,82 @@ const Functions = {
       el.setAttribute(attributes[i], attributes[i + 1] || "");
     }
   },
+
+  // Same as "elAttr" but also adds "data-otherattributelist" with all other attributes so it can be deleted when emptying the "Other" input field.
+  elAttrOther: function (el, attributesString = "") {
+    // Not an element as first argument
+    if (!(el instanceof Element)) {
+      throw new TypeError(
+        "The first argument must be a valid DOM element using document.createElement('element')."
+      );
+    }
+    // No attributes?
+    if (attributesString == "") {
+      throw new SyntaxError(
+        "Argument should be: attribute1=Value1|attribute2=Value2 and so on."
+      );
+    }
+    // Split the attributesArray string by "=" or "|"
+    const attributes = attributesString.split(/=|\|/);
+
+    // Set attributes for element `el`
+    const otherattrArr = [];
+    const l = attributes.length;
+    for (let i = 0; i < l; i += 2) {
+      otherattrArr.push(attributes[i]);
+      el.setAttribute(attributes[i], attributes[i + 1] || "");
+    }
+    // Join array of name of other attributes into a string so they specifically can be removed when needed while keeping others!
+    const otherattrStr = otherattrArr.join(",");
+    el.setAttribute("data-storedothers", otherattrStr);
+  },
+
+  // Show messages below elements
+  showMsg: function (e, msg, t = 2000) {
+    // Create a div with styling
+    let Box = document.createElement("div");
+    Box.textContent = msg;
+    Box.classList.add("FEFBEupdates");
+    Box.style.padding = "0.7rem";
+    Box.style.fontWeight = "bold";
+    Box.style.border = "1px solid #ccc";
+    Box.style.borderRadius = "0.5rem";
+    Box.style.color = "black";
+    Box.style.position = "fixed";
+    Box.style.backgroundColor = "#f1f1f1";
+    // Grab the (e = event) client's coordinates to position box correctly (by positioning it where you clicked)
+    const targetElement = e.target.getBoundingClientRect();
+    // Show it below the cursor so the text is roughly in the middle of the cursor.
+    Box.style.left = `${targetElement.x}px`;
+    Box.style.top = `${targetElement.y + 45}px`;
+    // Finally output it to DOM
+    document.body.append(Box);
+
+    // Then remove the box after 2 seconds
+    setTimeout(() => {
+      Box.remove();
+    }, t);
+  },
+
+  // Set "FEFBEactiveOutputElement" (should be same as FEFBEactiveFieldset as they
+  // are connected) or "FEFBEactiveFieldset" (greenlighted element in HTMLTab).
+  setActiveEl: function (el, whichActive) {
+    // Not an element as first argument
+    if (!(el instanceof Element)) {
+      throw new TypeError(
+        "The first argument must be a valid DOM element. Incorrect QuerySelector(All)?"
+      );
+    }
+    if (
+      whichActive != "FEFBEactiveFieldset" &&
+      whichActive != "FEFBEactiveOutputElement"
+    ) {
+      throw new TypeError(
+        "Second argument should be class: 'FEFBEactiveFieldset' or class: 'FEFBEactiveOutputElement'!"
+      );
+    }
+    el.classList.add(whichActive);
+  },
 };
 
 export { Functions };

@@ -83,12 +83,11 @@ body {
   gap: 10px !important;
   border-radius: 5px !important;
 }
+
 .FEFBElegends:hover {
   cursor: pointer !important;
 }
-.FEFBElegend-siblings-hidden ~ * {
-  display: none;
-}
+
 .FEFBElabels,
 .FEFBElegends {
   font-weight: bold !important;
@@ -104,6 +103,15 @@ body {
   height: 40px !important;
   font-size: 1rem !important;
 }
+
+#FEFBEselectAppendStyle {
+  width: 313px !important;
+}
+
+#FEFBEimportant {
+  font-size: 1.2rem;
+}
+
 #FEFBEchosenHTMLElement {
   width: 222px !important;
 }
@@ -114,14 +122,32 @@ body {
   cursor: pointer !important;
 }
 
+#FEFBEresetAll {
+  vertical-align: sub !important;
+  display: inline-block !important;
+  font-size: 1.6rem !important;
+  font-weight: bold !important;
+  height: 44px !important;
+  width: 140px !important;
+  background-color: red !important;
+  padding: 0.2rem !important;
+  border: 0 !important;
+  border-radius: 5px !important;
+  cursor: pointer !important;
+  color: white !important;
+  text-align: center !important;
+}
+
 .FEFBEsaveElements,
 .FEFBEdelElements {
   color: white !important;
   padding: 0.4rem !important;
   border: 0 !important;
   border-radius: 5px !important;
-  font-size: 0.9 !important;
+  font-size: 1.2rem !important;
   font-weight: bold !important;
+  height: 40px !important;
+  width: 40px !important;
 }
 .FEFBEdelElements {
   background-color: red !important;
@@ -130,6 +156,8 @@ body {
   background-color: green !important;
 }
 
+#FEFBEresetAll:hover,
+#FEFBEresetAll:focus,
 .FEFBEsaveElements:hover,
 .FEFBEsaveElements:focus,
 .FEFBEdelElements:hover,
@@ -145,7 +173,7 @@ body {
   font-weight: bold !important;
   width: 44px !important;
   background-color: green !important;
-  padding: 0.3rem !important;
+  padding: 0.2rem !important;
   border-radius: 5px !important;
   cursor: pointer !important;
   color: white !important;
@@ -176,6 +204,12 @@ when copying CSS & HTML */
   animation-iteration-count: 1 !important;
   animation-direction: normal !important;
 }
+.FEFBEupdates {
+  animation-name: FEFBEupdates !important;
+  animation-duration: 3s !important;
+  animation-iteration-count: 1 !important;
+  animation-direction: normal !important;
+}
 @keyframes FEFBEcopied {
   from {
     opacity: 1;
@@ -183,6 +217,18 @@ when copying CSS & HTML */
   }
   to {
     transform: translateY(-20px);
+    opacity: 0;
+  }
+}
+
+@keyframes FEFBEupdates {
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
     opacity: 0;
   }
 }

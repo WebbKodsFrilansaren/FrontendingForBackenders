@@ -4,6 +4,9 @@
 import { jsonData } from "./data/json.js";
 import { Functions } from "./functions/functions.js";
 import {
+  reservedClasses,
+  reservedIds,
+  reservedAttributes,
   cssRulesAllArray,
   cssRulesWithVendor,
   elementsWithTextContent,
@@ -11,6 +14,7 @@ import {
   elementsWithHrefAttribute,
   mainStyleSheet,
   outputStyleSheet,
+  singleAttributesHTMLTab,
 } from "./data/variables.js";
 import { HTMLFunctions } from "./functions/HTMLfunctions.js";
 import { CopyFunctions } from "./functions/Copyfunctions.js";
@@ -43,6 +47,22 @@ window.addEventListener("DOMContentLoaded", () => {
   const navCSSbtn = document.getElementById("FEFBEcssBtn");
   const htmlTab = document.getElementById("FEFBEhtml");
   const cssTab = document.getElementById("FEFBEcss");
+
+  // Reset All Button
+  const resetAllBtn = document.querySelector("#FEFBEresetAll");
+
+  // Listen for "RESET" button, but only clicks! Deny key presses.
+  resetAllBtn.addEventListener("keypress", (e) => {
+    e.preventDefault();
+    return;
+  });
+  resetAllBtn.addEventListener("click", (e) => {
+    confirm("WARNING: RELOAD PAGE AND DELETE EVERYTHING?");
+    if (!confirm) {
+      return;
+    }
+    window.location.reload();
+  });
 
   /*********************************************
   EVENT LISTENER FOR TAB NAVIGATION (HTML + CSS)
@@ -128,26 +148,7 @@ window.addEventListener("DOMContentLoaded", () => {
     const chosenAddStyle = addStyleBox.value;
     const smartCheckBox = document.querySelector("#FEFBEcheckbox");
     const smartAddingchecked = smartCheckBox.checked;
-
     // Checks before adding
-    if (chosenHTML == "") {
-      // Nothing chosen
-      elementInput.setAttribute("placeholder", "Choose an element!");
-      setTimeout(() => {
-        elementInput.setAttribute("placeholder", "Write an element");
-      }, 1500);
-      return;
-    }
-
-    if (!HTMLList.includes(chosenHTML)) {
-      // Element don't exist
-      elementInput.value = "";
-      elementInput.setAttribute("placeholder", "Invalid element!");
-      setTimeout(() => {
-        elementInput.setAttribute("placeholder", "Write an element");
-      }, 1500);
-      return;
-    }
 
     if (chosenAddStyle == "") {
       // No "Add Method" chosen
@@ -157,6 +158,19 @@ window.addEventListener("DOMContentLoaded", () => {
         addStyleBox.style.color = "";
         addStyleBox.style.borderColor = "";
       }, 1500);
+      Functions.showMsg(e, 'Choose from "Add Method:" first!', 2000);
+      return;
+    }
+
+    if (chosenHTML == "") {
+      // Nothing chosen
+      Functions.showMsg(e, "Write an element!", 2000);
+      return;
+    }
+
+    if (!HTMLList.includes(chosenHTML)) {
+      // Element don't exist
+      Functions.showMsg(e, "Invalid element!", 2000);
       return;
     }
 
@@ -165,10 +179,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (grabGreenFieldset == null && elementforms != null) {
       // Element don't exist
       elementInput.value = "";
-      elementInput.setAttribute("placeholder", "Pick Element #<Number>:");
-      setTimeout(() => {
-        elementInput.setAttribute("placeholder", "Write an element");
-      }, 2500);
+      Functions.showMsg(e, 'Choose an "Element #<number>:" below first!', 3000);
       return;
     }
 
@@ -183,6 +194,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Listen for "ENTER"
   addHTMLField.addEventListener("keyup", (e) => {
     if (e.key === "Enter" || e.keyCode === 13) {
+      e.preventDefault();
       // Clicks on the + button initiating its Event Listener
       addHTML.click();
     }
@@ -196,16 +208,30 @@ window.addEventListener("DOMContentLoaded", () => {
   */
   // Listen for "CLICKS" inside of "HTML" Tab
   htmlTab.addEventListener("click", (e) => {
-    e.preventDefault();
     // Clicked on "LEGENDS"? Changing what is the current one to add next element in relationship to.
     if (e.target.matches("[data-legendid]")) {
+      // Grab correct id to also change inside of #FEFBEoutput to correct one
+      const targetOutputElementId = e.target.dataset.belongstoelementid;
+      const correctOutputEl = document.querySelector(
+        `[data-elementid="${targetOutputElementId}"]`
+      );
       // Change clicked on to the active one and deactivate the previously active one.
       if (!e.target.parentNode.classList[1]) {
+        // Grab current active Fieldset and current active element in OUTPUT
         const activeLegend = document.querySelector(".FEFBEactiveFieldset");
+        const activeOutput = document.querySelector(
+          '[data-outputcurrentactive="yes"]'
+        );
+        // Mark current active in HTML Tab and also in the OUTPUT by adding and setting.
         e.target.parentNode.classList.add("FEFBEactiveFieldset");
+        correctOutputEl.setAttribute("data-outputcurrentactive", "yes");
         // Only remove the class if it exists
         if (activeLegend) {
           activeLegend.classList.remove("FEFBEactiveFieldset");
+        }
+        // Only remove data-attribute if it exists
+        if (activeOutput) {
+          activeOutput.removeAttribute("data-outputcurrentactive");
         }
       }
     }
@@ -230,28 +256,52 @@ window.addEventListener("DOMContentLoaded", () => {
   // Listen for "ENTER" presses inside of "HTML" Tab
   htmlTab.addEventListener("keyup", (e) => {
     e.preventDefault();
-
-    // Pressed ENTER inside of an `id` input field?
-    if (e.target.matches("[data-idid]")) {
-      if (e.key === "Enter" || e.keyCode === 13) {
-        const correctid = e.target.dataset.belongstoelementid;
-        const output = document.getElementById("FEFBEoutput");
-        Functions.elAttr(
-          output.querySelector(`[data-elementid="${correctid}"]`),
-          "id=" + e.target.value
-        );
-      }
+    // Only execute code after pressed Enter
+    if (e.key !== "Enter" || e.keyCode !== 13) {
+      return;
     }
+    // output, correctid, correctinput = used by all if statements below
+    const correctid = e.target.dataset.belongstoelementid;
+    const correctinput = e.target.value;
+    const output = document.getElementById("FEFBEoutput");
+    const correctoutputel = output.querySelector(
+      `[data-elementid="${correctid}"]`
+    );
 
-    // Pressed ENTER inside of an `class` input field?
-    if (e.target.matches("[data-classid]")) {
+    // Find and change attributes:"data-idid","data-classid", "data-hrefid", "data-srcid"
+    // It does NOT work with "Other", "textContent" or "innerHTML"
+    if (
+      e.target.matches(
+        `[data-attributetype="${
+          singleAttributesHTMLTab[e.target.dataset.attributetype]
+        }"]`
+      )
+    ) {
+      // Pressed ENTER inside of an `id`,`class`,`src`,`href` input field?
       if (e.key === "Enter" || e.keyCode === 13) {
-        const correctid = e.target.dataset.belongstoelementid;
-        const output = document.getElementById("FEFBEoutput");
+        // Remove attribute when empty
+        if (correctinput == "") {
+          if (correctoutputel.hasAttribute(e.target.dataset.attributetype)) {
+            correctoutputel.removeAttribute(e.target.dataset.attributetype);
+          }
+          Functions.showMsg(e, "Attribute Removed!");
+          return;
+        }
+        // Check against keywords!
+        if (
+          reservedClasses.includes(correctinput) ||
+          reservedIds.includes(correctinput)
+        ) {
+          Functions.showMsg(e, "Reserved Attribute Value. Not updated!", 3000);
+          return;
+        }
+        // Otherwise add it
         Functions.elAttr(
           output.querySelector(`[data-elementid="${correctid}"]`),
-          "class=" + e.target.value
+          e.target.dataset.attributetype + "=" + correctinput
         );
+        Functions.showMsg(e, "Attribute Updated!");
+        return;
       }
     }
 
@@ -259,51 +309,69 @@ window.addEventListener("DOMContentLoaded", () => {
     if (e.target.matches("[data-textcontentid]")) {
       if (e.key === "Enter" || e.keyCode === 13) {
         // Change textContent of `data-elementid`
-        const correctid = e.target.dataset.belongstoelementid;
-        const output = document.getElementById("FEFBEoutput");
         const outputid = output.querySelector(
           `[data-elementid="${correctid}"]`
         );
-        outputid.textContent = e.target.value;
+        outputid.textContent = correctinput;
+        Functions.showMsg(e, "textContent Updated!");
       }
-    }
-
-    // Pressed ENTER inside of an `src` input field?
-    if (e.target.matches("[data-srcid]")) {
-      if (e.key === "Enter" || e.keyCode === 13) {
-        // Change `src` attribute of `data-elementid`
-        const correctid = e.target.dataset.belongstoelementid;
-        const output = document.getElementById("FEFBEoutput");
-        Functions.elAttr(
-          output.querySelector(`[data-elementid="${correctid}"]`),
-          "src=" + e.target.value
-        );
-      }
-    }
-
-    // Pressed ENTER inside of an `href` input field?
-    if (e.target.matches("[data-hrefid]")) {
-      if (e.key === "Enter" || e.keyCode === 13) {
-        // Change `href` attribute of `data-elementid`
-        const correctid = e.target.dataset.belongstoelementid;
-        const output = document.getElementById("FEFBEoutput");
-        Functions.elAttr(
-          output.querySelector(`[data-elementid="${correctid}"]`),
-          "href=" + e.target.value
-        );
-      }
+      return;
     }
 
     // Pressed ENTER inside of an `Other` input field?
+    // TODO LATER: Validate to not allow input reserved (data-, #ids & .classes) OR duplicate attributes
     if (e.target.matches("[data-otherattributesid]")) {
       if (e.key === "Enter" || e.keyCode === 13) {
-        // Change its attributes of `data-elementid`
-        const correctid = e.target.dataset.belongstoelementid;
-        const output = document.getElementById("FEFBEoutput");
-        Functions.elAttr(
-          output.querySelector(`[data-elementid="${correctid}"]`),
-          e.target.value
-        );
+        // Not allowed to use "id" or "class" attributes.
+        if (reservedAttributes.includes(correctinput)) {
+          Functions.showMsg(e, "Reserved attribute. Not updated!", 3000);
+          return;
+        }
+        // Not allowed to use "data-XXX" (dataset) attributes.
+        if (correctinput.includes("data-")) {
+          Functions.showMsg(
+            e,
+            "Data attributes Not Allowed. Not updated!",
+            3000
+          );
+          return;
+        }
+        // Clear list of other attributes when empty
+        if (correctinput == "") {
+          if (correctoutputel.hasAttribute("data-storedothers")) {
+            const otherattrs = correctoutputel.dataset.storedothers;
+            const otherattrsArr = otherattrs.split(",");
+            const l = otherattrsArr.length;
+            for (let i = 0; i < l; i++) {
+              correctoutputel.removeAttribute(otherattrsArr[i]);
+            }
+            correctoutputel.removeAttribute("data-storedothers");
+            return;
+          }
+          Functions.showMsg(e, "Other attributes removed!", 3000);
+          return;
+        }
+
+        // Insert list of other attributes when not empty
+        if (correctinput != "") {
+          // First check if previous ones existed and just "reset" things to insert new ones.
+          if (correctoutputel.hasAttribute("data-storedothers")) {
+            const otherattrs = correctoutputel.dataset.storedothers;
+            const otherattrsArr = otherattrs.split(",");
+            const l = otherattrsArr.length;
+            for (let i = 0; i < l; i++) {
+              correctoutputel.removeAttribute(otherattrsArr[i]);
+            }
+          }
+
+          // Change its other attributes of `data-elementid`
+          Functions.elAttrOther(
+            output.querySelector(`[data-elementid="${correctid}"]`),
+            correctinput
+          );
+          Functions.showMsg(e, "Other attributes updated!", 3000);
+          return;
+        }
       }
     }
   });
@@ -318,6 +386,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
   cssTab.addEventListener("keyup", (e) => {
     e.preventDefault();
+    // Only execute code after pressed Enter
+    if (e.key !== "Enter" || e.keyCode !== 13) {
+      return;
+    }
   });
 
   /***********************************************
@@ -327,7 +399,6 @@ window.addEventListener("DOMContentLoaded", () => {
   // TODO: Delete when done, used for testing purposes
   CSSFunctions.setCSSRuleOutputSheet("main", "border", "5px solid grey");
   CSSFunctions.setCSSRuleOutputSheet("nav", "border", "5px solid pink");
-  CSSFunctions.setCSSRuleOutputSheet("nav:hover", "height", "25px");
   CSSFunctions.setCSSRuleOutputSheet(
     "main > nav",
     "border",
