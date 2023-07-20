@@ -6,11 +6,56 @@ import {
   elementsWithHrefAttribute,
   elementsWithSrcAttribute,
   elementsWithTextContent,
+  reservedAttributes,
+  reservedClasses,
+  reservedIds,
 } from "../data/variables.js";
 import { Functions } from "./functions.js";
 //import { increaseCounter } from "./functions.js";
 
 const HTMLFunctions = {
+  // "calculateDepth" counts the number of parentNodes starting from received `element`. Stops
+  // at parentNode "FEFBEoutput" which is the # of that div where all HTML is contained within.
+  // THANKS TO CHATGPT3.5, slightly fixed the while-loop.
+  outputDOMDepth: function (element) {
+    // Commenting so I show that I understand what I am using:
+    // Start at depth 0 and let currentNode be the received element
+    let depth = 0;
+    let currentNode = element;
+    // While the currentNodes parentNode is not the FEFBEoutput div
+    while (
+      currentNode.parentNode &&
+      currentNode.parentNode.id !== "FEFBEoutput"
+    ) {
+      // Then add depth counter and change the currentNode to its
+      // parentNode making the next currentNode.parentNode going one step up the DOM
+      depth++;
+      currentNode = currentNode.parentNode;
+    }
+    // Return the final depth based on how many levels we have traversed up inside of the FEFBEoutput div for each element added there.
+    // This is HIGHLY inefficient, but works though...
+    return depth;
+  },
+
+  // "formDepth:" adds Marginleft styling to each <form> element by
+  //  counting the depth of the DOM inside of the FEFBEoutput div.
+  // THANKS TO CHATGPT3.5, adapted it to my JS module structure.
+  // Commenting so I show that I understand what I am using:
+  formDepth: function () {
+    const forms = document.querySelectorAll("#FEFBEhtml > form");
+    // For each <form> element inside of the HTML Tab...
+    forms.forEach((form) => {
+      // ...First grab its id to select that same element inside of the #FEFBEoutput...
+      const formId = form.dataset.formid;
+      const element = document.querySelector(`[data-elementid="${formId}"]`);
+      // ...Then use the caluclateDepth() function to retrieve depth value...
+      const depth = HTMLFunctions.outputDOMDepth(element);
+      // ...which is then multiplied with 8 so the marginLeft is actually somewhat visible.
+      const marginLeft = depth * 8 + "px";
+      form.style.marginLeft = marginLeft;
+    });
+  },
+
   // Add New HTML element to the "shadowDOM"
   addElementToShadowDOM: function (element, appendType, smartAddingchecked) {
     // Grab shadowDOM & create element
@@ -24,7 +69,6 @@ const HTMLFunctions = {
 
     // Now check whether any elements exists first at all
     if (output.firstChild == null) {
-      addMethodList.selectedIndex = 0;
       output.append(createEl);
       // Set what is current active output element so it is consistent with the greenlighted one in the HTML Tab.
       createEl.setAttribute("data-outputcurrentactive", "yes");
@@ -33,7 +77,14 @@ const HTMLFunctions = {
       const currentActiveOutputElement = document.querySelector(
         "[data-outputcurrentactive='yes']"
       );
-      if (appendType == "root") {
+
+      // First child in FEFBEoutput div
+      if (appendType == "rootfirst") {
+        output.prepend(createEl);
+      }
+
+      // Last child in FEFBEoutput div
+      if (appendType == "rootlast") {
         output.append(createEl);
       }
 
@@ -72,6 +123,10 @@ const HTMLFunctions = {
     if (smartAddingchecked == true) {
       HTMLFunctions.smartAddingChanger(element, appendType);
     }
+
+    // Update styles for form elements
+    HTMLFunctions.formDepth();
+    return;
   },
 
   // FUNCTION: "addElementToHTMLTab"
@@ -365,12 +420,20 @@ const HTMLFunctions = {
       // Grab "active" (green fieldiset)
       const grabGreenFieldset = document.querySelector(".FEFBEactiveFieldset");
       const grabHTMLTab = document.getElementById("FEFBEhtml");
+      const grabHR = document.querySelector("#FEFBEhtml > hr");
       // Check "Add Method:" (appendType) and insert in correct accordingly.
       const appendType = document.getElementById(
         "FEFBEselectAppendStyle"
       ).value;
 
-      if (appendType == "root") {
+      // Add after the <hr> element since that is always the first element before any <form> elements
+      if (appendType == "rootfirst") {
+        // And insert after its parentNode (the Form it is inside of)
+        grabHR.after(createForm);
+      }
+
+      // Just append meaning it becomes the last child in FEFBEhtml "HTML" Tab which is correct placement then.
+      if (appendType == "rootlast") {
         // And insert after its parentNode (the Form it is inside of)
         grabHTMLTab.append(createForm);
       }
@@ -392,17 +455,76 @@ const HTMLFunctions = {
         grabGreenFieldset.parentNode.after(createForm);
       }
 
+      // We insert this way and then fix it later for a specific case
       if (appendType == "appendLast") {
         // And insert after its parentNode (the Form it is inside of)
         grabGreenFieldset.parentNode.after(createForm);
       }
 
+      // Set correct Active Fieldset after!
       grabGreenFieldset.classList.remove("FEFBEactiveFieldset");
       const grabCorrectNewGreenField = document.querySelector(
         `[data-fieldsetid="${correctGreenId}"]`
       );
       grabCorrectNewGreenField.classList.add("FEFBEactiveFieldset");
+
+      // Special when appendLast for the Forms since it does not put itself as lastChild in the forms while it does so in the OUTPUT
+      // So check that appendLast is the choice which is the special occassion when this is needed.
+      if (
+        appendType == "appendLast" &&
+        document.querySelectorAll("form").length > 2
+      ) {
+        const lastOutputedId = document.querySelector(
+          `[data-elementid="${correctGreenId}"]`
+        );
+
+        console.log(lastOutputedId);
+
+        // Check if previous sibling exists because then we know we must move the
+        // form id because only when there is a previous sibling does this issue occur.
+        const prevId = lastOutputedId?.previousSibling?.dataset?.elementid;
+        console.log(prevId);
+        if (prevId != null && prevId != undefined) {
+          const toBeMoved = document.querySelector(
+            `[data-formid="${correctGreenId}"]`
+          );
+          // Place form id after the previously inserted elementid.
+          document.querySelector(`[data-formid="${prevId}"]`).after(toBeMoved);
+        }
+      }
+
+      // Special case for Sibling After Selection when they have children in DOM but they only inserted .after() previous Form element in HTML Tab
+      // So find the last child in the DOM that are used as .after() for the Sibling After Selection.
+      if (
+        appendType == "siblingafter" &&
+        document.querySelectorAll("form").length > 2
+      ) {
+        // Grab last output
+        const lastOutputedId = document.querySelector(
+          `[data-elementid="${correctGreenId}"]`
+        );
+        // Then null check and store the id of the last child of the previous sibling assuming they exist
+        const previousSibling = lastOutputedId.previousSibling;
+        const innerLastChild = Functions.findInnerLastChild(previousSibling);
+        const prevSiblingsLastChild = innerLastChild?.dataset?.elementid;
+        if (
+          prevSiblingsLastChild != null &&
+          prevSiblingsLastChild != undefined
+        ) {
+          // Grab last output of <form>
+          const toBeMoved = document.querySelector(
+            `[data-formid="${correctGreenId}"]`
+          );
+          // Place form id after the previously inserted elementid.
+          document
+            .querySelector(`[data-formid="${prevSiblingsLastChild}"]`)
+            .after(toBeMoved);
+        }
+      }
     }
+
+    // Show message after adding element
+    Functions.showMsg(document.getElementById("FEFBEplus"), "Element Added!");
   },
 
   // Smart Adding Function that changes
@@ -424,7 +546,7 @@ const HTMLFunctions = {
     }
     // Change back after first li to Append so it doesn't nest li
     if (htmlList.value == "li") {
-      appendList.selectedIndex = 1;
+      appendList.selectedIndex = 3;
       return;
     }
     // TODO: Add more "smart" changes between elements and adding type.
@@ -433,25 +555,147 @@ const HTMLFunctions = {
   // Delete HTML Element both from shadowDOM and from HTML TAB
   deleteElShadowAndTab: function (e, id) {
     const correctformid = document.querySelector(`[data-formid="${id}"]`);
-    correctformid.remove(); // Delete from HTML TAB
     const output = document.getElementById("FEFBEoutput");
 
     // Grab correct shadowDOM element
     const correctOutputElement = output.querySelector(
       `[data-elementid="${id}"]`
     );
-
+    correctformid.remove(); // Delete from HTML TAB
     // Then check if it has children
     // This works but I do not understand 100% why the `else` is never ran
     // Or how it is able to delete even first added item which is always a child item.
     // How is that removed without removing its parent which would be `#FEFBEoutput`.
     const parentNodeCheck = correctOutputElement.parentNode;
+
     if (parentNodeCheck?.children?.length > 0) {
       correctOutputElement.replaceWith(...correctOutputElement.childNodes);
-    } else {
-      console.log("Normal");
+      console.log("Accidental remove?");
+    } // This seem to never run?
+    else {
+      console.log("Removed Normally and NOT with replaceWith???");
       correctOutputElement.remove();
     }
+    // Update marginLeft for all <form> elements in HTML Tab.
+    HTMLFunctions.formDepth();
+    // Show message after deleting
+    Functions.showMsg(
+      document.getElementById("FEFBEresetAll"),
+      "Element removed!"
+    );
+    return;
+  },
+
+  // Save all HTML input fields in "HTML" Tab:
+  saveElShadowAndTab: function (e, id) {
+    // Grab all their input fields
+    const allInputFieldsForCorrectId = document.querySelectorAll(
+      `input[data-belongstoelementid="${id}"]`
+    );
+    // Also grab correct output element
+    const correctOutputElement = document.querySelector(
+      `[data-elementid='${id}']`
+    );
+
+    // Loop through and apply differently
+    allInputFieldsForCorrectId.forEach((input) => {
+      // Ignore these two for now because they need separate code¨
+      if (
+        input.dataset.attributetype != "other" &&
+        input.dataset.attributetype != "textContent"
+      ) {
+        // Then apply values for the `src`,`id`,`class`,`alt` & `href` attributes...
+        if (input.value != "") {
+          // But first check that they are not reserved
+          if (
+            !reservedClasses.includes(input.value) &&
+            !reservedIds.includes(input.value)
+          ) {
+            correctOutputElement.setAttribute(
+              input.dataset.attributetype,
+              input.value
+            );
+            Functions.showMsg(input, "Updated!");
+          } else {
+            Functions.showMsg(input, "Reserved attribute. Not updated!", 3000);
+          }
+        } else {
+          // ...or just remove them if they exist if input is empty!
+          if (correctOutputElement.hasAttribute(input.dataset.attributetype)) {
+            correctOutputElement.removeAttribute(input.dataset.attributetype);
+            Functions.showMsg(input, "Attribute removed!");
+          }
+        }
+      }
+      // Set new textContent or else empty it for correct Output Element
+      if (input.dataset.attributetype == "textContent") {
+        if (input.value != "") {
+          correctOutputElement.textContent = input.value;
+          Functions.showMsg(input, "Text updated!");
+        } else {
+          correctOutputElement.textContent = "";
+          Functions.showMsg(input, "Text removed if it existed!");
+        }
+      }
+      // LAST Thing to do so we can use return; to jump out of
+      // the forEach loop while still executing the rest of the function.
+      // Update or set new "Other" attributes
+      if (input.dataset.attributetype == "other") {
+        if (reservedAttributes.includes(input.value)) {
+          Functions.showMsg(input, "Reserved attribute. Not updated!", 3000);
+          return;
+        }
+        if (input.value.includes("data-")) {
+          Functions.showMsg(
+            input,
+            "Data attributes Not Allowed. Not updated!",
+            3000
+          );
+          return;
+        }
+
+        // Clear list of other attributes when empty
+        if (input.value == "") {
+          if (correctOutputElement.hasAttribute("data-storedothers")) {
+            const otherattrs = correctOutputElement.dataset.storedothers;
+            const otherattrsArr = otherattrs.split(",");
+            const l = otherattrsArr.length;
+            for (let i = 0; i < l; i++) {
+              correctOutputElement.removeAttribute(otherattrsArr[i]);
+            }
+            correctOutputElement.removeAttribute("data-storedothers");
+            return;
+          }
+          Functions.showMsg(input, "Other attributes removed!", 3000);
+          return;
+        }
+
+        // Insert list of other attributes when not empty
+        if (input.value != "") {
+          // First check if previous ones existed and just "reset" things to insert new ones.
+          if (correctOutputElement.hasAttribute("data-storedothers")) {
+            const otherattrs = correctOutputElement.dataset.storedothers;
+            const otherattrsArr = otherattrs.split(",");
+            const l = otherattrsArr.length;
+            for (let i = 0; i < l; i++) {
+              correctOutputElement.removeAttribute(otherattrsArr[i]);
+            }
+          }
+          // Change its other attributes of `data-elementid`
+          const output = document.getElementById("FEFBEoutput");
+          Functions.elAttrOther(
+            output.querySelector(`[data-elementid="${id}"]`),
+            input.value
+          );
+          Functions.showMsg(input, "Other attributes updated!", 3000);
+          return;
+        }
+      }
+    });
+    // Show message after done
+    setTimeout(() => {
+      Functions.showMsg(e, "All fields processed!");
+    }, 1500);
   },
 };
 

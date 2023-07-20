@@ -95,7 +95,12 @@ const Functions = {
     Box.style.position = "fixed";
     Box.style.backgroundColor = "#f1f1f1";
     // Grab the (e = event) client's coordinates to position box correctly (by positioning it where you clicked)
-    const targetElement = e.target.getBoundingClientRect();
+    // However, it checks if you sent it just an element which is still in `e` but it has no target since it is not an event but an element.
+    // Is `e` an instance of Event? Then grab that targets coordinates or just grab the elements coordinates.
+    const targetElement =
+      e instanceof Event
+        ? e.target.getBoundingClientRect() // When received as a Target from an Event.
+        : e.getBoundingClientRect(); // When received as just a DOM Element.
     // Show it below the cursor so the text is roughly in the middle of the cursor.
     Box.style.left = `${targetElement.x}px`;
     Box.style.top = `${targetElement.y + 45}px`;
@@ -126,6 +131,21 @@ const Functions = {
       );
     }
     el.classList.add(whichActive);
+  },
+
+  // Find innermost childElement from a startingNode
+  findInnerLastChild: function (startingNode) {
+    // First declare lastChild to be the last child of a starting node
+    let lastChild = startingNode.lastChild;
+
+    // Then we say that while `lastChild` has a lastChild (lastChild.lastChild)
+    while (lastChild && lastChild.lastChild) {
+      // Then we update to say that is the current lastChild and check again in while()
+      lastChild = lastChild.lastChild;
+    }
+    // It breaks out because the next lastChild in the while() loop
+    // might NOT have its own lastChild meaning they are the lastChild that is returned.
+    return lastChild;
   },
 };
 

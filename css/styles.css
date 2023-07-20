@@ -105,7 +105,7 @@ body {
 }
 
 #FEFBEselectAppendStyle {
-  width: 313px !important;
+  width: 275px !important;
 }
 
 #FEFBEimportant {
@@ -128,7 +128,7 @@ body {
   font-size: 1.6rem !important;
   font-weight: bold !important;
   height: 44px !important;
-  width: 140px !important;
+  width: 44px !important;
   background-color: red !important;
   padding: 0.2rem !important;
   border: 0 !important;

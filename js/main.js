@@ -56,12 +56,15 @@ window.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     return;
   });
+
   resetAllBtn.addEventListener("click", (e) => {
-    confirm("WARNING: RELOAD PAGE AND DELETE EVERYTHING?");
-    if (!confirm) {
+    e.preventDefault();
+    const reload = confirm("WARNING: RELOAD PAGE AND DELETE EVERYTHING?");
+    if (!reload) {
       return;
+    } else {
+      window.location.reload();
     }
-    window.location.reload();
   });
 
   /*********************************************
@@ -158,19 +161,19 @@ window.addEventListener("DOMContentLoaded", () => {
         addStyleBox.style.color = "";
         addStyleBox.style.borderColor = "";
       }, 1500);
-      Functions.showMsg(e, 'Choose from "Add Method:" first!', 2000);
+      Functions.showMsg(elementInput, 'Choose from "Add Method:" first!', 2000);
       return;
     }
 
     if (chosenHTML == "") {
       // Nothing chosen
-      Functions.showMsg(e, "Write an element!", 2000);
+      Functions.showMsg(elementInput, "Write an element!", 2000);
       return;
     }
 
     if (!HTMLList.includes(chosenHTML)) {
       // Element don't exist
-      Functions.showMsg(e, "Invalid element!", 2000);
+      Functions.showMsg(elementInput, "Invalid element!", 2000);
       return;
     }
 
@@ -178,8 +181,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const elementforms = document.querySelector("[data-formid]");
     if (grabGreenFieldset == null && elementforms != null) {
       // Element don't exist
-      elementInput.value = "";
-      Functions.showMsg(e, 'Choose an "Element #<number>:" below first!', 3000);
+      Functions.showMsg(
+        elementInput,
+        'Choose an "Element #<number>:" below first!',
+        3000
+      );
       return;
     }
 
@@ -191,12 +197,24 @@ window.addEventListener("DOMContentLoaded", () => {
     );
   });
 
-  // Listen for "ENTER"
+  // Deny any characters that are not a-z or A-Z
+  addHTMLField.addEventListener("keydown", (e) => {
+    const allowedKeys = /^[a-zA-Z]+$/; // Only allow a-ZA-Z meaning whitespace + special characters are disallowed
+
+    // Check if the pressed key is not allowed
+    if (!allowedKeys.test(e.key)) {
+      e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+      return;
+    }
+  });
+
+  // Then listen for "ENTER" presses when a-Z/A-Z characters are inside of it.
   addHTMLField.addEventListener("keyup", (e) => {
     if (e.key === "Enter" || e.keyCode === 13) {
       e.preventDefault();
       // Clicks on the + button initiating its Event Listener
       addHTML.click();
+      return;
     }
   });
 
@@ -209,21 +227,23 @@ window.addEventListener("DOMContentLoaded", () => {
   // Listen for "CLICKS" inside of "HTML" Tab
   htmlTab.addEventListener("click", (e) => {
     // Clicked on "LEGENDS"? Changing what is the current one to add next element in relationship to.
+    console.log(e);
     if (e.target.matches("[data-legendid]")) {
       // Grab correct id to also change inside of #FEFBEoutput to correct one
       const targetOutputElementId = e.target.dataset.belongstoelementid;
       const correctOutputEl = document.querySelector(
         `[data-elementid="${targetOutputElementId}"]`
       );
+      const classList = e.target.parentNode.classList;
       // Change clicked on to the active one and deactivate the previously active one.
-      if (!e.target.parentNode.classList[1]) {
+      if (!classList[1]) {
         // Grab current active Fieldset and current active element in OUTPUT
         const activeLegend = document.querySelector(".FEFBEactiveFieldset");
         const activeOutput = document.querySelector(
           '[data-outputcurrentactive="yes"]'
         );
         // Mark current active in HTML Tab and also in the OUTPUT by adding and setting.
-        e.target.parentNode.classList.add("FEFBEactiveFieldset");
+        classList.add("FEFBEactiveFieldset");
         correctOutputEl.setAttribute("data-outputcurrentactive", "yes");
         // Only remove the class if it exists
         if (activeLegend) {
@@ -234,10 +254,12 @@ window.addEventListener("DOMContentLoaded", () => {
           activeOutput.removeAttribute("data-outputcurrentactive");
         }
       }
+      return;
     }
 
     // Clicked on "DELETE" button?
     if (e.target.matches("[data-deletehtmlid]")) {
+      console.log("Accidental remove?");
       const fieldsetLegendItem = e.target.parentNode.firstChild.textContent;
       const confirmDelete = confirm("Delete: '" + fieldsetLegendItem + "' ?");
       if (!confirmDelete) {
@@ -245,11 +267,150 @@ window.addEventListener("DOMContentLoaded", () => {
       }
       const targetdeleteid = e.target.dataset.deletehtmlid;
       HTMLFunctions.deleteElShadowAndTab(e, targetdeleteid);
+      return;
     }
 
-    // Clicked on "SAVE" button?
+    // Clicked on "SAVE" button? Then send correct id to save & apply all its input fields
     if (e.target.matches("[data-savehtmlid]")) {
-      console.log("SAVE");
+      const id = e.target.dataset.belongstoelementid;
+      HTMLFunctions.saveElShadowAndTab(e, id);
+      return;
+    }
+  });
+
+  // Listen for "WRONG" characters in different kinds of input fields and deny them!
+  htmlTab.addEventListener("keydown", (e) => {
+    // Shorten event target
+    const target = e.target;
+
+    // "id" INPUT FIELDS: Only allow a-Z,A-Z & 0-9 inside of id input fields.
+    if (target.matches("[data-idid]")) {
+      // First key ONLY a-z & A-Z
+      const allowedFirstKeys = /^[a-zA-Z]/;
+
+      // Check first character meaning input field is empty
+      if (e.target.value == "") {
+        if (!allowedFirstKeys.test(e.key)) {
+          e.preventDefault(); // Stop here
+          return;
+        }
+      }
+
+      // If we are here, that means it is not empty meaning it passed first test so we can just check was it now only allowed
+      // Only allow a-ZA-Z meaning whitespace + special characters are disallowed
+      const allowedKeys = /^[a-zA-Z0-9\-._]*$/;
+
+      // Check if the pressed key after first successful one is not allowed
+      if (!allowedKeys.test(e.key)) {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+    }
+
+    // "class" INPUT FIELDS: Only allow a-Z,A-Z & 0-9 inside of id input fields.
+    if (target.matches("[data-classid]")) {
+      // First key ONLY a-z & A-Z
+      const allowedFirstKeys = /^[a-zA-Z]/;
+
+      // Check first character meaning input field is empty
+      if (e.target.value == "") {
+        if (!allowedFirstKeys.test(e.key)) {
+          e.preventDefault(); // Stop here
+          return;
+        }
+      }
+
+      // Grab position of caret (cursor in input fields) if that is zero disallow numbers, space and - to be used!
+      const caretPos = e.target.selectionStart;
+      const invalidStartRegex = /^[0-9\s\-]$/;
+      if (caretPos == 0 && invalidStartRegex.test(e.key)) {
+        e.preventDefault();
+        return;
+      }
+
+      // If we are here, that means it is not empty meaning it passed first test so we can just check was it now only allowed
+      // Only allow a-ZA-Z meaning whitespace + special characters are disallowed
+      let allowedKeys;
+      // Check if current input value is a space
+      if (e.target.value.endsWith(" ")) {
+        // Then allow no space
+        allowedKeys = /^([a-zA-Z])*$/;
+      } // Otherwise allow space
+      else {
+        allowedKeys = /^([a-zA-Z0-9\s\-])*$/;
+      }
+
+      // Check if the pressed key after first successful one is not allowed
+      if (!allowedKeys.test(e.key)) {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+    }
+
+    // Make small letters only for readability purposes
+    if (target.matches("[data-hrefid]") || target.matches("[data-srcid]")) {
+      // First, disallow space when trying to type in beginning of the input when there are characters
+      const caretPos = e.target.selectionStart;
+      if (caretPos == 0 && e.key == " ") {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+      // Don't allow quotes
+      if (e.key == '"' || e.key == "'") {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+    }
+
+    // For "alt" attribute
+    if (target.matches("[data-altid]")) {
+      const caretPos = e.target.selectionStart;
+      if (caretPos == 0 && e.key == " ") {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+      // Don't allow single nor double quotes
+      if (e.key == '"' || e.key == "'") {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+    }
+
+    // For "Other" input fields
+    if (target.matches("[data-otherattributesid]")) {
+      const caretPos = e.target.selectionStart;
+      if (caretPos == 0 && (e.key == " " || e.key == "|" || e.key == "=")) {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+      // Don't allow single nor double quotes
+      if (e.key == '"' || e.key == "'") {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+      // Do not allow duplicates of spaces...
+      if (e.target.value.endsWith(" ") && e.key == " ") {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+
+      // ... equal signs (=) ...
+      if (
+        e.target.value.endsWith("=") &&
+        (e.key == "=" || e.key == "|" || e.key == " ")
+      ) {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
+
+      // ... or | signs. However, it is still far from "foolproof".
+      if (
+        e.target.value.endsWith("|") &&
+        (e.key == "|" || e.key == "=" || e.key == " ")
+      ) {
+        e.preventDefault(); // Prevent default behavior (don't allow the character to be entered)
+        return;
+      }
     }
   });
 
@@ -313,7 +474,11 @@ window.addEventListener("DOMContentLoaded", () => {
           `[data-elementid="${correctid}"]`
         );
         outputid.textContent = correctinput;
-        Functions.showMsg(e, "textContent Updated!");
+        if (outputid.textContent == "") {
+          Functions.showMsg(e, "textContent removed if it existed!");
+        } else {
+          Functions.showMsg(e, "textContent Updated!");
+        }
       }
       return;
     }
@@ -382,6 +547,7 @@ window.addEventListener("DOMContentLoaded", () => {
   // Listen for "clicks" inside of "CSS" Tab
   cssTab.addEventListener("click", (e) => {
     e.preventDefault();
+    return;
   });
 
   cssTab.addEventListener("keyup", (e) => {
@@ -411,6 +577,9 @@ window.addEventListener("DOMContentLoaded", () => {
   CSSFunctions.setCSSRuleOutputSheet("ul > li", "margin", "1rem");
   CSSFunctions.setCSSRuleOutputSheet("a", "border", "3px solid red");
   CSSFunctions.setCSSRuleOutputSheet("p", "border", "10px solid purple");
+  CSSFunctions.setCSSRuleOutputSheet("main", "border", "5px solid brown");
+  CSSFunctions.setCSSRuleOutputSheet("footer", "height", "100px");
+  CSSFunctions.setCSSRuleOutputSheet("footer", "border", "3px solid tan");
   console.log(outputStyleSheet);
 
   // END OF "DOMCONTENTLOADED" Event Listening Function

@@ -19,12 +19,15 @@
           <input type="checkbox" id="FEFBEcheckbox" checked />
           <label class="FEFBElabels">Add Method:</label>
           <select id="FEFBEselectAppendStyle">
-            <option value="root" selected>
-              Add Last To &lt;OUTPUT&gt; (Not Selection)
+            <option value="rootfirst" selected>
+              Add First To &lt;OUTPUT&gt; (Root)
             </option>
-            <option value="siblingafter">Add Sibling After Selection</option>
+            <option value="rootlast">Add Last To &lt;OUTPUT&gt; (Root)</option>
             <option value="siblingbefore">Add Sibling Before Selection</option>
-            <option value="appendFirst">Add First Child After Selection</option>
+            <option value="siblingafter">Add Sibling After Selection</option>
+            <option value="appendFirst">
+              Add New/First Child After Selection
+            </option>
             <option value="appendLast">
               Add New/Last Child After Selection
             </option>
@@ -148,16 +151,15 @@
             <option class="FEFBEoptions" value="video"></option>
             <option class="FEFBEoptions" value="wbr"></option>
           </datalist>
-          <br />
           <span id="FEFBEplus">+</span>
           <button
             type="button"
             id="FEFBEresetAll"
             title="WARNING: This reloads page to reset EVERYTHING!">
-            🗑️ RESET
+            🗑️
           </button>
           <span id="FEFBEimportant"
-            ><strong>IMPORTANT:</strong>
+            ><strong style="line-height: 2">IMPORTANT:</strong>
             <span style="color: green; font-weight: bold">Selection</span>
             (click #Element &lt;Number&gt;: to change) in HTML Tab also selects
             same element in OUTPUT!</span
