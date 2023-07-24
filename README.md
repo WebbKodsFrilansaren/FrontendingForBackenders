@@ -4,6 +4,20 @@ Simple GUI for adding HTML elements and stylizing their CSS code for faster and 
 
 ## Progress (Updates)
 
+- 2023-07-24
+
+  - Seventh commit(!). There is now a CSS Tab where you can see your selectors such as ids and classes appear. The selectors are only added once and you must remove all instances of a class before it is fully removed from the list of suggested selectors. This took some code and it is interesting how there are some stuff to be done for such a simple functionality such as not showing any duplicates classes in a list of suggested selectors. When you add an id that is already used by some other input field you will be noticed and red text for 3 seconds in that input field. Helps informing what is wrong, why and where. Since id can only occur once in their CSS nature, that issue in showing up and being removed from list of suggested selectors was not an issue.
+
+  - ~~The solution to the classes was the following: 1. First grab all classes from all `[data-classid]`. 2. Split them up and put them into an array with the dot added in front of them. 3. Count the occurence of each class into an object (thanks for the tip chatGPT3.5!). 4. Then when I remove a class from the list of suggested selectors, just check if its occurence is NOT 1. The function `changeOrInsertClassesSelectorSuggestion` in `CSSfunctions.js` is where you find the details.~~
+
+  - Of course I discover issues with the whole classes updating thing as I write this. So, it is not 100% fixed. There are three states for the classes: 1. When you insert them for the first time. 2. When you empty a field with classes. 3. When you update a field that already has classes. When you update you could add or remove some of the classes which must then dynamically update in the list of selectors so it either changes correct ones, removes correct ones, and/or adds correct ones.
+
+  - And as I wrote previous list paragraph above, I now might have solved it. Now I seem to be able to add, remove and change the classes and it will make sure no duplicates are inside of the list of suggested selectors. The functions to check the details for are from hereon: `changeOrInsertClassesSelectorSuggestion` and `removeClassesSelectorSuggestion`, both inside of `CSSfunctions.js` just as before.
+
+  - Now, I might hopefully be able to move on to the real beast in terms of EventHandling checks: the adding and changing of actual CSS properties, meaning when you change sliders, checks and unchecks boxes that disables and enables dropdown menus for choosing for example units for CSS rules with multiple values that can be a mix of both numbers and texts. For example: `margin: 0 auto;` and so on.
+
+  - _NEXT STEPS/TODOS_: Be able to create CSS rules that are specific for one CSS selector, so that each added CSS rule is added to the chosen selector, and be able to remove the CSS Rule and also the entire selector which then removes all its CSS rules attached to it. I am thinking of using actual `divs` this time around.
+
 - 2023-07-20
 
   - Sixth commit(!). Alright, so this will probably turn out to be pretty "meh" or shoulders-shrugging when comparing to typical online offers such as webflow and Elementors Pro. However, what is kinda interesting is the amount of JavaScript I've been forced to learn since I am "flying without a net" so to speak. It is now possible to use the ✔️ button for each added HTML element to apply all input fields immediately and that function is somewhat nice since it uses several other functions in ways where it kinda looks cool. The journey of coding this stuff is more enjoyable and probably more useful than the actual "end product".

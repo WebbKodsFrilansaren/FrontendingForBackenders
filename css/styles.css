@@ -92,6 +92,9 @@ body {
 .FEFBElegends {
   font-weight: bold !important;
 }
+#FEFBEcssrule,
+#FEFBEchosenselector,
+#FEFBEselectsuggestselector,
 #FEFBEselectAppendStyle,
 #FEFBEchosenHTMLElement,
 .FEFBEinputs {
@@ -104,8 +107,13 @@ body {
   font-size: 1rem !important;
 }
 
+#FEFBEcssrule,
 #FEFBEselectAppendStyle {
   width: 275px !important;
+}
+
+#FEFBEchosenselector {
+  width: 420px !important;
 }
 
 #FEFBEimportant {
@@ -115,6 +123,7 @@ body {
 #FEFBEchosenHTMLElement {
   width: 222px !important;
 }
+#FEFBEselectsuggestselector,
 #FEFBEselectAppendStyle {
   cursor: pointer !important;
 }
@@ -122,6 +131,7 @@ body {
   cursor: pointer !important;
 }
 
+#FEFBEresetAll2,
 #FEFBEresetAll {
   vertical-align: sub !important;
   display: inline-block !important;
@@ -156,6 +166,8 @@ body {
   background-color: green !important;
 }
 
+#FEFBEresetAll2:hover,
+#FEFBEresetAll2:focus,
 #FEFBEresetAll:hover,
 #FEFBEresetAll:focus,
 .FEFBEsaveElements:hover,
@@ -166,6 +178,7 @@ body {
   filter: brightness(133%) !important;
 }
 
+#FEFBEplus2,
 #FEFBEplus {
   vertical-align: sub !important;
   display: inline-block !important;
@@ -180,6 +193,8 @@ body {
   text-align: center !important;
 }
 
+#FEFBEplus2:hover,
+#FEFBEplus2:focus,
 #FEFBEplus:hover,
 #FEFBEplus:focus {
   filter: brightness(133%) !important;

@@ -196,13 +196,15 @@ const HTMLFunctions = {
       "Without #",
       "data-attributetype",
       "id",
+      "data-currentvalue",
+      "",
     ]);
 
     // class <input text>
     const label2 = Functions.elCreate(
       "label",
       ["class", "FEFBElabels"],
-      "class"
+      "classes"
     );
     counters.classCounter = Functions.increaseCounter(counters.classCounter);
     const createInputForClass = Functions.elCreate("input", [
@@ -220,6 +222,8 @@ const HTMLFunctions = {
       "Without .",
       "data-attributetype",
       "class",
+      "data-currentvalue",
+      "",
     ]);
 
     // Appending all
@@ -251,6 +255,8 @@ const HTMLFunctions = {
         counters.elementCounter,
         "data-attributetype",
         "textContent",
+        "data-currentvalue",
+        "",
       ]);
       createFieldset.appendChild(label3);
       createFieldset.append(createInputTextContent);
@@ -278,6 +284,8 @@ const HTMLFunctions = {
         'Without ""',
         "data-attributetype",
         "href",
+        "data-currentvalue",
+        "",
       ]);
       createFieldset.appendChild(label4);
       createFieldset.append(createInputHref);
@@ -306,6 +314,8 @@ const HTMLFunctions = {
         'Without ""',
         "data-attributetype",
         "alt",
+        "data-currentvalue",
+        "",
       ]);
       createFieldset.appendChild(altLabel);
       createFieldset.append(createInputAlt);
@@ -334,6 +344,8 @@ const HTMLFunctions = {
         'Without ""',
         "data-attributetype",
         "src",
+        "data-currentvalue",
+        "",
       ]);
       createFieldset.appendChild(label5);
       createFieldset.append(createInputSrc);

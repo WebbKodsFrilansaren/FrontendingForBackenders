@@ -147,6 +147,17 @@ const Functions = {
     // might NOT have its own lastChild meaning they are the lastChild that is returned.
     return lastChild;
   },
+
+  // Grab <datalist> as array from suggested CSS Selectors so it is always current one
+  currentSelectorSuggestions: function () {
+    return Array.from(document.getElementById("FEFBEselectorlist").options).map(
+      (option) => option.value
+    ) != []
+      ? Array.from(document.getElementById("FEFBEselectorlist").options).map(
+          (option) => option.value
+        )
+      : []; // Return empty when it is before first suggested selector is inserted
+  },
 };
 
 export { Functions };

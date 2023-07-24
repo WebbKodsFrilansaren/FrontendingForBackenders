@@ -37,10 +37,24 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById("FEFBEselectHTML").options
   ).map((option) => option.value);
 
+  // Insert all CSS rules from "cssRulesAllArray" const array into datalist, also control against.
+  const CSSList = cssRulesAllArray;
+  // Create <datalist> for all CSS rules from `cssRulesAllArray` array variable.
+  const CSSRuleInputField = document.getElementById("FEFBEselectcss");
+  CSSList.forEach((item) => {
+    const cssItem = Functions.elCreate("option", [
+      "class",
+      "FEFBEoptions",
+      "value",
+      item,
+    ]);
+    CSSRuleInputField.appendChild(cssItem);
+  });
+
   // Add Buttons
   const addHTML = document.getElementById("FEFBEplus"); // + for HTML adding
   const addHTMLField = document.getElementById("FEFBEchosenHTMLElement"); // Input field after "Element:"
-  const addCSS = document.getElementById("");
+  const addCSS = document.getElementById("FEFBEplus2");
 
   // Grab Navigation elements (HTML + CSS) to listen for switching between them
   const navHTMLbtn = document.getElementById("FEFBEhtmlBtn");
@@ -50,6 +64,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   // Reset All Button
   const resetAllBtn = document.querySelector("#FEFBEresetAll");
+  const resetAllBtn2 = document.querySelector("#FEFBEresetAll2");
 
   // Listen for "RESET" button, but only clicks! Deny key presses.
   resetAllBtn.addEventListener("keypress", (e) => {
@@ -58,6 +73,21 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 
   resetAllBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const reload = confirm("WARNING: RELOAD PAGE AND DELETE EVERYTHING?");
+    if (!reload) {
+      return;
+    } else {
+      window.location.reload();
+    }
+  });
+  // resetAllBtn2 is the exact same kind of button but for the one on "CSS" Tab.
+  resetAllBtn2.addEventListener("keypress", (e) => {
+    e.preventDefault();
+    return;
+  });
+
+  resetAllBtn2.addEventListener("click", (e) => {
     e.preventDefault();
     const reload = confirm("WARNING: RELOAD PAGE AND DELETE EVERYTHING?");
     if (!reload) {
@@ -174,6 +204,7 @@ window.addEventListener("DOMContentLoaded", () => {
     if (!HTMLList.includes(chosenHTML)) {
       // Element don't exist
       Functions.showMsg(elementInput, "Invalid element!", 2000);
+      elementInput.value = "";
       return;
     }
 
@@ -218,6 +249,39 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  /*********************************
+  EVENT LISTENER TO ADD NEW CSS RULE
+  *********************************/
+  // Listen for "click" on plus sign (+) in CSS Tab
+  addCSS.addEventListener("click", (e) => {
+    e.preventDefault();
+    const correctselector = document.getElementById("FEFBEchosenselector"); // Input field "Selector:"
+    const correctselectorvalue = correctselector.value; // Value from input "Selector:"
+    const correctinputfield = document.getElementById("FEFBEcssrule"); // Input field "CSS Rule:"
+    const correctinput = correctinputfield.value; // Value from "CSS Rule:" input
+
+    // Empty "Selector:" field?"
+    if (correctselectorvalue == "") {
+      Functions.showMsg(correctselector, "Write or choose a selector!", 3000);
+      return;
+    }
+
+    // Empty "CSS Rule:" field?
+    if (correctinput == "") {
+      Functions.showMsg(correctinputfield, "Write a CSS rule!", 3000);
+      return;
+    }
+
+    // Invalid CSS rule? (not chosen from <datalist>)
+    if (!CSSList.includes(correctinput)) {
+      Functions.showMsg(correctinputfield, "Invalid CSS rule!", 3000);
+      correctinputfield.value = "";
+      return;
+    }
+
+    return;
+  });
+
   /*******************************************************************************************
   GLOBAL EVENT DELEGATION LISTENER: Do different things depending on what was clicked or enter
   *******************************************************************************************/
@@ -227,7 +291,6 @@ window.addEventListener("DOMContentLoaded", () => {
   // Listen for "CLICKS" inside of "HTML" Tab
   htmlTab.addEventListener("click", (e) => {
     // Clicked on "LEGENDS"? Changing what is the current one to add next element in relationship to.
-    console.log(e);
     if (e.target.matches("[data-legendid]")) {
       // Grab correct id to also change inside of #FEFBEoutput to correct one
       const targetOutputElementId = e.target.dataset.belongstoelementid;
@@ -259,7 +322,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Clicked on "DELETE" button?
     if (e.target.matches("[data-deletehtmlid]")) {
-      console.log("Accidental remove?");
       const fieldsetLegendItem = e.target.parentNode.firstChild.textContent;
       const confirmDelete = confirm("Delete: '" + fieldsetLegendItem + "' ?");
       if (!confirmDelete) {
@@ -423,7 +485,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     // output, correctid, correctinput = used by all if statements below
     const correctid = e.target.dataset.belongstoelementid;
-    const correctinput = e.target.value;
+    const correctinput = e.target.value.trim();
     const output = document.getElementById("FEFBEoutput");
     const correctoutputel = output.querySelector(
       `[data-elementid="${correctid}"]`
@@ -444,7 +506,25 @@ window.addEventListener("DOMContentLoaded", () => {
         if (correctinput == "") {
           if (correctoutputel.hasAttribute(e.target.dataset.attributetype)) {
             correctoutputel.removeAttribute(e.target.dataset.attributetype);
+            const selectorCheck = Functions.currentSelectorSuggestions();
+            // Also remove from suggestion if existing (for `id`)
+            if (
+              e.target.dataset.attributetype == "id" &&
+              selectorCheck.includes("#" + e.target.dataset.currentvalue)
+            ) {
+              const correctcurrentvalue = e.target.dataset.currentvalue;
+              CSSFunctions.removeIdSelectorSuggestion(correctcurrentvalue);
+            }
+            // Also remove from suggestion if existing (for `class`)
+            if (e.target.dataset.attributetype == "class") {
+              const oldvalue = e.target.dataset.currentvalue;
+              CSSFunctions.removeClassesSelectorSuggestion(
+                oldvalue,
+                correctinput
+              );
+            }
           }
+          e.target.dataset.currentvalue = "";
           Functions.showMsg(e, "Attribute Removed!");
           return;
         }
@@ -456,11 +536,51 @@ window.addEventListener("DOMContentLoaded", () => {
           Functions.showMsg(e, "Reserved Attribute Value. Not updated!", 3000);
           return;
         }
-        // Otherwise add it
+        // FOR `id`: Check if it already exists in suggested selectors in CSS Tab, meaning you already used it for another added element
+        if (e.target.dataset.attributetype == "id") {
+          const selectorCheck = Functions.currentSelectorSuggestions();
+          if (selectorCheck.includes("#" + correctinput)) {
+            Functions.showMsg(e, "Attribute is already being used!");
+            e.target.style.color = "red";
+            setTimeout(() => {
+              e.target.style.color = "black";
+            }, 3000);
+            return;
+          } else {
+            // When first time, data-currentvalue will be "" so it will be inserted instead of changed
+            const currentidval = e.target.dataset.currentvalue;
+            CSSFunctions.changeOrInsertIdSelectorSuggestion(
+              currentidval,
+              correctinput
+            );
+          }
+        }
+        // FOR `classes`: Check if it already exists in suggested selectors in CSS Tab, meaning you already used it for another added element
+        if (e.target.dataset.attributetype == "class") {
+          // Grab old value and split `correctinput` into an array
+          const oldvalue = e.target.dataset.currentvalue;
+          const classes = correctinput.split(" ").map((e) => "." + e);
+          // Use Set Object and compare its length as it creates a new unique array
+          const uniqueness = new Set(classes);
+          if (classes.length != uniqueness.size) {
+            // Duplicates if lengths are different since Set{} removes any duplicates
+            Functions.showMsg(e, "Duplicates of classes!");
+            return;
+          }
+          // So, no duplicates input field for classes.
+          CSSFunctions.changeOrInsertClassesSelectorSuggestion(
+            oldvalue,
+            correctinput
+          );
+        }
+
+        // Otherwise add it and check against and add to suggested selectors in CSS Tab
         Functions.elAttr(
           output.querySelector(`[data-elementid="${correctid}"]`),
           e.target.dataset.attributetype + "=" + correctinput
         );
+        e.target.dataset.currentvalue = correctinput;
+
         Functions.showMsg(e, "Attribute Updated!");
         return;
       }

@@ -166,7 +166,29 @@
           >
           <hr />
         </div>
-        <div id="FEFBEcss">CSS</div>
+        <div id="FEFBEcss">
+          <label class="FEFBElabels">Selector:</label>
+          <input
+            type="text"
+            id="FEFBEchosenselector"
+            list="FEFBEselectorlist"
+            placeholder="Write a selector, suggestions are from HTML elements" />
+          <datalist id="FEFBEselectorlist"></datalist>
+          <label class="FEFBElabels">CSS Rule:</label>
+          <input
+            type="text"
+            list="FEFBEselectcss"
+            id="FEFBEcssrule"
+            placeholder="Write a CSS rule" />
+          <datalist id="FEFBEselectcss"> </datalist>
+          <span id="FEFBEplus2">+</span>
+          <button
+            type="button"
+            id="FEFBEresetAll2"
+            title="WARNING: This reloads page to reset EVERYTHING!">
+            🗑️
+          </button>
+        </div>
       </div>
       <div id="FEFBEverticalLine"></div>
       <div id="FEFBEoutputContainer">

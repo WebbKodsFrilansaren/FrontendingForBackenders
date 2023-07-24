@@ -3,6 +3,8 @@
 ***********************************************************/
 import { outputStyleSheet, mainStyleSheet } from "../data/variables.js";
 import { cssRulesWithVendor, cssRulesAllArray } from "../data/variables.js";
+import { Functions } from "./functions.js";
+import { HTMLFunctions } from "./HTMLfunctions.js";
 
 const CSSFunctions = {
   // FUNCTION: "setCSSRuleMainSheet" - change CSS in non-shadowDOM
@@ -97,6 +99,160 @@ const CSSFunctions = {
       output.adoptedStyleSheets = [outputStyleSheet];
       return;
     }
+  },
+  // FUNCTION: remove `id` from list of suggested selectors
+  removeIdSelectorSuggestion: function (idvalue) {
+    const selectorSuggestionList = document.getElementById("FEFBEselectorlist");
+    selectorSuggestionList.querySelector(`[value="#${idvalue}"]`).remove();
+  },
+  // FUNCTION: change OR insert `id` in list of suggested selectors
+  changeOrInsertIdSelectorSuggestion: function (currentid, idvalue) {
+    const selectorSuggestionList = document.getElementById("FEFBEselectorlist");
+    // Insert new when currentvalue is empty since it is first time
+    if (currentid == "") {
+      const selectorSuggestionItem = Functions.elCreate("option", [
+        "class",
+        "FEFBEoptions",
+        "value",
+        "#" + idvalue,
+      ]);
+      selectorSuggestionList.appendChild(selectorSuggestionItem);
+    } // Otherwise change current value!
+    else {
+      selectorSuggestionList
+        .querySelector(`[value="#${currentid}"]`)
+        .setAttribute("value", "#" + idvalue);
+    }
+  },
+  // FUNCTION: Remove `classes` values in list of suggested selectors if they occur exactly once
+  removeClassesSelectorSuggestion: function (currentclasses, classvalue) {
+    // Prepare all needed elements...
+    const selectorSuggestionList = document.getElementById("FEFBEselectorlist");
+    // ...and also grab all current classes from all `data-classid` input fields
+    const allClassInputFields = document.querySelectorAll(`[data-classid]`);
+    const allClassesArray = []; // Store all here to check against duplicates
+    const currentOnes = currentclasses.split(" ");
+    currentOnes.forEach((e) => allClassesArray.push("." + e));
+    allClassInputFields.forEach((e) => {
+      const classArrSplit = e.value.split(" ");
+      classArrSplit.forEach((e) => {
+        if (e) {
+          allClassesArray.push("." + e);
+        }
+      });
+    });
+
+    // Count the occurrences of each class in allClassesArray
+    const classCounts = {}; // Start with an empty object
+    allClassesArray.forEach((className) => {
+      // Only count existing class names added to the list
+      if (classCounts[className]) {
+        classCounts[className]++;
+      } // Or create a new class name.
+      else {
+        classCounts[className] = 1;
+      }
+    });
+
+    const oldClassesArr = currentclasses.split(" ");
+    oldClassesArr.forEach((element) => {
+      // Compare if it occurs more than once
+      const suggestionValue = `.${element}`;
+      if (classCounts[suggestionValue] == 1) {
+        selectorSuggestionList.querySelector(`[value=".${element}"]`).remove();
+      }
+    });
+  },
+  // FUNCTION: Insert `class` value(s) in list of suggested selectors
+  changeOrInsertClassesSelectorSuggestion: function (
+    currentclasses,
+    classvalue
+  ) {
+    // Prepare all needed elements...
+    const selectorSuggestionList = document.getElementById("FEFBEselectorlist");
+    const currentList = Functions.currentSelectorSuggestions();
+    // ...and also grab all current classes from all `data-classid` input fields
+    const allClassInputFields = document.querySelectorAll(`[data-classid]`);
+    const allClassesArray = []; // Store all here to check against duplicates
+    const currentOnes = currentclasses.split(" ");
+    currentOnes.forEach((e) => allClassesArray.push("." + e));
+    allClassInputFields.forEach((e) => {
+      const classArrSplit = e.value.split(" ");
+      classArrSplit.forEach((e) => {
+        if (e) {
+          allClassesArray.push("." + e);
+        }
+      });
+    });
+
+    // Count the occurrences of each class in allClassesArray
+    const classCounts = {}; // Start with an empty object
+    allClassesArray.forEach((className) => {
+      // Only count existing class names added to the list
+      if (classCounts[className]) {
+        classCounts[className]++;
+      } // Or create a new class name.
+      else {
+        classCounts[className] = 1;
+      }
+    });
+    // We end up with an empty property called ".", so let's just remove that from the object.
+    if (classCounts.hasOwnProperty(".")) {
+      delete classCounts["."];
+    }
+    // Now we know how many times a class occurs and we can compare this when deleting.
+    // Insert new when currentvalue is empty since it is first time
+    if (currentclasses == "") {
+      const newClassesToArr = classvalue.split(" ");
+      newClassesToArr.forEach((element) => {
+        const selectorSuggestionItem = Functions.elCreate("option", [
+          "class",
+          "FEFBEoptions",
+          "value",
+          "." + element,
+        ]);
+        // Only add if it does not already exist in the list since several elements can share classes but it should only be included in suggestion once
+        if (!currentList.includes(selectorSuggestionItem.value)) {
+          selectorSuggestionList.appendChild(selectorSuggestionItem);
+        }
+      });
+    } // Delete all classes when receiving empty string
+    else if (classvalue == "") {
+      const oldClassesArr = currentclasses.split(" ");
+      oldClassesArr.forEach((element) => {
+        selectorSuggestionList.querySelector(`[value=".${element}"]`).remove();
+      });
+    } // Otherwise change current values by...
+    else {
+      const newClassToArr = classvalue.split(" ");
+      const oldClassesArr = currentclasses.split(" ");
+      // ...first deleting all ones and...
+      oldClassesArr.forEach((element) => {
+        const suggestionValue = `.${element}`;
+        if (classCounts[suggestionValue] == 1) {
+          selectorSuggestionList
+            .querySelector(`[value=".${element}"]`)
+            .remove();
+        }
+      });
+      // ...then inserting possible new ones!
+      newClassToArr.forEach((element) => {
+        const selectorSuggestionItem = Functions.elCreate("option", [
+          "class",
+          "FEFBEoptions",
+          "value",
+          "." + element,
+        ]);
+        // Only add if it does not already exist in the list since several elements can share classes but it should only be included in suggestion once{
+        if (!currentList.includes(selectorSuggestionItem.value)) {
+          selectorSuggestionList.appendChild(selectorSuggestionItem);
+        }
+      });
+    }
+  },
+  // FUNCTION: Add CSS Rule to CSS Tab
+  addCSSRuleToCSSTab: function (selector, cssrule) {
+    const CSSTab = document.getElementById("FEFBEcss");
   },
 };
 
