@@ -8,8 +8,10 @@ const counters = {
   saveHTMLBtnCounter: 0,
   deleteHTMLBtnCounter: 0,
   cssRuleCounter: 0,
-  saveCSSBtnCounter: 0,
-  deleteCSSBtnCounter: 0,
+  cssSelectorCounter: 0,
+  saveCSSRuleBtnCounter: 0,
+  deleteCSSRuleBtnCounter: 0,
+  deleteSelectorBtnCounter: 0,
   textContentCounter: 0,
   altCounter: 0,
   hrefCounter: 0,
@@ -43,6 +45,10 @@ document.adoptedStyleSheets = [outputStyleSheet];
 
 // Array: Reserved classes that can be used in selectors (they are used by GUI)
 const reservedClasses = [
+  "FEFBEhr",
+  "FEFBEremoveselector",
+  "FEFBEcustom-legend",
+  "FEFBElegend-text",
   "FEFBEtabButtons",
   "FEFBEtabButtons:hover",
   "FEFBEtabButtons:focus",
@@ -81,6 +87,10 @@ const reservedClasses = [
   ".FEFBEsaveElements:focus",
   ".FEFBEactiveFieldset",
   ".FEFBEcopied",
+  ".FEFBEcustom-legend",
+  ".FEFBElegend-text",
+  ".FEFBEremoveselector",
+  ".FEFBEhr",
 ];
 const reservedIds = [
   "#FEFBEselectorlist",

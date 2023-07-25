@@ -1,8 +1,19 @@
 /***********************************************************
  CSSfunctions.js - All functions used primarily on "CSS" TAB
 ***********************************************************/
-import { outputStyleSheet, mainStyleSheet } from "../data/variables.js";
-import { cssRulesWithVendor, cssRulesAllArray } from "../data/variables.js";
+import {
+  counters,
+  elementsWithHrefAttribute,
+  elementsWithSrcAttribute,
+  elementsWithTextContent,
+  reservedAttributes,
+  reservedClasses,
+  reservedIds,
+  outputStyleSheet,
+  mainStyleSheet,
+  cssRulesWithVendor,
+  cssRulesAllArray,
+} from "../data/variables.js";
 import { Functions } from "./functions.js";
 import { HTMLFunctions } from "./HTMLfunctions.js";
 
@@ -132,7 +143,11 @@ const CSSFunctions = {
     const allClassInputFields = document.querySelectorAll(`[data-classid]`);
     const allClassesArray = []; // Store all here to check against duplicates
     const currentOnes = currentclasses.split(" ");
-    currentOnes.forEach((e) => allClassesArray.push("." + e));
+    currentOnes.forEach((e) => {
+      if (e) {
+        allClassesArray.push("." + e);
+      }
+    });
     allClassInputFields.forEach((e) => {
       const classArrSplit = e.value.split(" ");
       classArrSplit.forEach((e) => {
@@ -153,7 +168,10 @@ const CSSFunctions = {
         classCounts[className] = 1;
       }
     });
-
+    // We end up with an empty property called ".", so let's just remove that from the object
+    if (classCounts.hasOwnProperty(".")) {
+      delete classCounts["."];
+    }
     const oldClassesArr = currentclasses.split(" ");
     oldClassesArr.forEach((element) => {
       // Compare if it occurs more than once
@@ -175,7 +193,11 @@ const CSSFunctions = {
     const allClassInputFields = document.querySelectorAll(`[data-classid]`);
     const allClassesArray = []; // Store all here to check against duplicates
     const currentOnes = currentclasses.split(" ");
-    currentOnes.forEach((e) => allClassesArray.push("." + e));
+    currentOnes.forEach((e) => {
+      if (e) {
+        allClassesArray.push("." + e);
+      }
+    });
     allClassInputFields.forEach((e) => {
       const classArrSplit = e.value.split(" ");
       classArrSplit.forEach((e) => {
@@ -251,9 +273,92 @@ const CSSFunctions = {
     }
   },
   // FUNCTION: Add CSS Rule to CSS Tab
-  addCSSRuleToCSSTab: function (selector, cssrule) {
+  addSelectorToCSSTab: function (selector, cssrule) {
     const CSSTab = document.getElementById("FEFBEcss");
+    // Increase counter for number of different selectors
+    counters.cssSelectorCounter = Functions.increaseCounter(
+      counters.cssSelectorCounter
+    );
+    // Increase counter for number of CSS Rules
+    counters.cssRuleCounter = Functions.increaseCounter(
+      counters.cssRuleCounter
+    );
+
+    // TODOS: Add only CSS rule to a new "Selector Div" if chosen selector doesn't already exist!
+    // If Selector already exist, just add the CSS rule to that CSS selector and exit(return) this function after!
+    if (document.querySelector(`[data-selectorname="${selector}"]`)) {
+      console.log("CSS Selector already exist!");
+      CSSFunctions.addCSSRuleToCSSTab(cssrule);
+      return;
+    }
+    // Create <div> with <span> inside of it. Div has `data-selectorid`.
+    const OuterDiv = Functions.elCreate("div", [
+      "class",
+      "FEFBEcustom-legend",
+      "data-selectorid",
+      counters.cssSelectorCounter,
+      "data-selectorname",
+      selector,
+      "title",
+      "",
+    ]);
+    // Create <span> inside of selector for <div>
+    const InnerSpan = Functions.elCreate(
+      "span",
+      [
+        "class",
+        "FEFBElegend-text",
+        "data-spanselectorname",
+        selector,
+        "title",
+        "Name of CSS selector",
+      ],
+      selector
+    );
+    // Connect them together
+    OuterDiv.appendChild(InnerSpan);
+    // Create <button> element to remove entire CSS Selector and increase its counter
+    counters.deleteSelectorBtnCounter = Functions.increaseCounter(
+      counters.deleteSelectorBtnCounter
+    );
+    // TODOS: Fix so correct `data-selectorid` is chosen here when adding a new rule to an existing selector!
+    // "[data-belongstoselectorname] is used to indicate to what CSS selector the button aims to remove!"
+    const selectorDeleteBtn = Functions.elCreate(
+      "button",
+      [
+        "class",
+        "FEFBEremoveselector",
+        "data-deleteselectorid",
+        counters.deleteSelectorBtnCounter,
+        "data-belongstoselectorname",
+        selector,
+        "title",
+        "REMOVE Selector: Also removes all its CSS rules inside of it!",
+      ],
+      "🗑️"
+    );
+    // Add Delete Selector Button to OuterDiv
+    OuterDiv.appendChild(selectorDeleteBtn);
+
+    // Output to CSS Tab.
+    CSSTab.appendChild(OuterDiv);
+
+    // Now add the CSS rule to this newly created selector and then exit(return) function!
+    CSSFunctions.addCSSRuleToCSSTab(cssrule);
+    return;
   },
+
+  // Add the actual CSS rule to correct Selector Div.
+  addCSSRuleToCSSTab: function (cssrule) {
+    return;
+  },
+
+  // Remove a Selector from the CSS Tab. This also deletes all applied CSS rules within that selector and thus from #FEFBEoutput div.
+  removeSelectorFromCSSTab: function (id) {
+    return;
+  },
+
+  // END OF ENTIRE LIST OF CSSFunctions
 };
 
 export { CSSFunctions };

@@ -55,6 +55,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const addHTML = document.getElementById("FEFBEplus"); // + for HTML adding
   const addHTMLField = document.getElementById("FEFBEchosenHTMLElement"); // Input field after "Element:"
   const addCSS = document.getElementById("FEFBEplus2");
+  const CSSSelectorField = document.getElementById("FEFBEchosenselector");
+  const addCSSField = document.getElementById("FEFBEcssrule");
 
   // Grab Navigation elements (HTML + CSS) to listen for switching between them
   const navHTMLbtn = document.getElementById("FEFBEhtmlBtn");
@@ -252,6 +254,25 @@ window.addEventListener("DOMContentLoaded", () => {
   /*********************************
   EVENT LISTENER TO ADD NEW CSS RULE
   *********************************/
+  // Listen for "Enter" inside of "Selectors:" input field
+  CSSSelectorField.addEventListener("keyup", (e) => {
+    e.preventDefault();
+    // Jump to CSS Rule: input field when pressing Enter after writing something
+    if (e.target.value != "" && (e.key === "Enter" || e.keyCode === 13)) {
+      addCSSField.focus();
+    }
+    return;
+  });
+  // Listen for "Enter" inside of "CSS Rule:" input field
+  // and simulate click on the (+) adjacent to the input field
+  addCSSField.addEventListener("keyup", (e) => {
+    if (e.key === "Enter" || e.keyCode === 13) {
+      e.preventDefault();
+      // Clicks on the + button initiating its Event Listener
+      addCSS.click();
+      return;
+    }
+  });
   // Listen for "click" on plus sign (+) in CSS Tab
   addCSS.addEventListener("click", (e) => {
     e.preventDefault();
@@ -279,6 +300,8 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Add CSS Rule when all OK!
+    CSSFunctions.addSelectorToCSSTab(correctselectorvalue, correctinput);
     return;
   });
 
@@ -666,7 +689,12 @@ window.addEventListener("DOMContentLoaded", () => {
   */
   // Listen for "clicks" inside of "CSS" Tab
   cssTab.addEventListener("click", (e) => {
-    e.preventDefault();
+    // Grab shortened target
+    const target = e.target;
+    if (target.matches("[data-spanselectorname]")) {
+      console.log(target);
+      return;
+    }
     return;
   });
 

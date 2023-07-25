@@ -165,6 +165,10 @@ body {
 .FEFBEsaveElements {
   background-color: green !important;
 }
+.FEFBEhr {
+  border: 2px solid #ccc !important;
+  border-radius: 9999px !important;
+}
 
 #FEFBEresetAll2:hover,
 #FEFBEresetAll2:focus,
@@ -193,6 +197,8 @@ body {
   text-align: center !important;
 }
 
+.FEFBEremoveselector:hover,
+.FEFBEremoveselector:focus,
 #FEFBEplus2:hover,
 #FEFBEplus2:focus,
 #FEFBEplus:hover,
@@ -209,6 +215,47 @@ body {
 /* Make active fieldset (element in HTML Tab) green so you know where you will insert next element in relation to. */
 .FEFBEactiveFieldset {
   border: 3px solid green !important;
+}
+
+/* CSS For CSS Tab (.FEFBEcustom-legend & .FEFBElegend-text from chatGPT3.5, thx!)  */
+.FEFBEcustom-legend {
+  margin-top: 0.5rem;
+  border: 1px solid #000 !important; /* Adjust border properties as needed */
+  padding: 8px !important; /* Add padding to create some space between text and border */
+  display: block !important; /* This is important to fit the content width */
+  position: relative !important; /* This is important for absolute positioning of the text */
+  width: 100% !important; /* Take up all availble width of CSS Tab */
+  height: 75px;
+}
+
+.FEFBElegend-text {
+  font-weight: bold !important;
+  background-color: #fff !important; /* Set a background color to match the background */
+  position: absolute !important; /* Position the text absolutely within the custom-legend */
+  top: -8px !important; /* Adjust the top position to move the text up above the border */
+  left: -8px !important; /* Adjust the left position to move the text away from the border */
+  padding: 0 4px !important; /* Add some padding to create space between text and border */
+}
+
+.FEFBElegend-text:hover {
+  cursor: pointer;
+  color: green;
+}
+
+.FEFBEremoveselector {
+  position: absolute !important;
+  top: 4px !important;
+  right: 4px !important;
+  cursor: pointer !important;
+  color: white !important;
+  padding: 0.1rem !important;
+  border: 0 !important;
+  border-radius: 5px !important;
+  font-size: 0.9rem !important;
+  font-weight: bold !important;
+  height: 33px !important;
+  width: 33px !important;
+  background-color: red !important;
 }
 
 /* CSS Animation effect

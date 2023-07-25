@@ -11,6 +11,7 @@ import {
   reservedIds,
 } from "../data/variables.js";
 import { Functions } from "./functions.js";
+import { CSSFunctions } from "./CSSfunctions.js";
 //import { increaseCounter } from "./functions.js";
 
 const HTMLFunctions = {
@@ -611,12 +612,99 @@ const HTMLFunctions = {
 
     // Loop through and apply differently
     allInputFieldsForCorrectId.forEach((input) => {
-      // Ignore these two for now because they need separate code¨
+      // For `id` input field when NOT empty
+      if (input.dataset.attributetype == "id" && input.value != "") {
+        // Check so it isn't already being used
+        const selectorCheck = Functions.currentSelectorSuggestions();
+        if (selectorCheck.includes("#" + input.value)) {
+          Functions.showMsg(input, "Attribute is already being used!");
+          e.target.style.color = "red";
+          setTimeout(() => {
+            e.target.style.color = "black";
+          }, 3000);
+        } // Also check so it does not conflict against reserved values
+        else if (
+          reservedClasses.includes(input.value) ||
+          reservedIds.includes(input.value)
+        ) {
+          Functions.showMsg(input, "Reserved attribute. Not updated!", 3000);
+        } // Otherwise insert new one or change current one as input field is not empty
+        else {
+          const currentidval = input.dataset.currentvalue;
+          const correctinput = input.value;
+          input.dataset.currentvalue = correctinput;
+          CSSFunctions.changeOrInsertIdSelectorSuggestion(
+            currentidval,
+            correctinput
+          );
+          correctOutputElement.setAttribute("id", correctinput);
+          Functions.showMsg(input, "Updated!");
+        }
+      }
+
+      // For `id` input field when EMPTY
+      if (input.dataset.attributetype == "id" && input.value == "") {
+        const selectorCheck = Functions.currentSelectorSuggestions();
+        // Find current `id` in list of "Selectors:"
+        if (selectorCheck.includes("#" + input.dataset.currentvalue)) {
+          // Then remove it
+          const correctcurrentvalue = input.dataset.currentvalue;
+          CSSFunctions.removeIdSelectorSuggestion(correctcurrentvalue);
+          input.dataset.currentvalue = "";
+          if (correctOutputElement.hasAttribute("id")) {
+            correctOutputElement.removeAttribute("id");
+          }
+        }
+        Functions.showMsg(input, "Attribute Removed!");
+      }
+
+      // For `class` input field when NOT empty
+      if (input.dataset.attributetype == "class" && input.value != "") {
+        // Grab old value and split `correctinput` into an array
+        const oldvalue = input.dataset.currentvalue;
+        const classes = input.value.split(" ").map((e) => "." + e);
+        // Use Set Object and compare its length as it creates a new unique array
+        const uniqueness = new Set(classes);
+        if (classes.length != uniqueness.size) {
+          // Duplicates if lengths are different since Set{} removes any duplicates
+          Functions.showMsg(input, "Duplicates of classes!");
+        } else {
+          // So, no duplicates input field for classes.
+          const correctinput = input.value;
+          CSSFunctions.changeOrInsertClassesSelectorSuggestion(
+            oldvalue,
+            correctinput
+          );
+          correctOutputElement.setAttribute("class", input.value);
+          input.dataset.currentvalue = input.value;
+          Functions.showMsg(input, "Attribute Updated!");
+        }
+      }
+
+      // For `class` input field when EMPTY
+      if (input.dataset.attributetype == "class" && input.value == "") {
+        // Grab values...
+        const correctinput = input.value;
+        const oldvalue = input.dataset.currentvalue;
+        // ...Remove them from "Selectors:"...
+        CSSFunctions.removeClassesSelectorSuggestion(oldvalue, correctinput);
+        // ...Change currentvalue...
+        input.dataset.currentvalue = "";
+        // And remove attribute from correct `data-elementid`
+        if (correctOutputElement.hasAttribute("class")) {
+          correctOutputElement.removeAttribute("class");
+        }
+        Functions.showMsg(input, "Attribute Removed!");
+      }
+
+      // For `src`, `alt` & `href`
       if (
         input.dataset.attributetype != "other" &&
-        input.dataset.attributetype != "textContent"
+        input.dataset.attributetype != "textContent" &&
+        input.dataset.attributetype != "id" &&
+        input.dataset.attributetype != "class"
       ) {
-        // Then apply values for the `src`,`id`,`class`,`alt` & `href` attributes...
+        // Then apply values for the `src`,`alt` & `href` attributes
         if (input.value != "") {
           // But first check that they are not reserved
           if (
@@ -639,6 +727,7 @@ const HTMLFunctions = {
           }
         }
       }
+
       // Set new textContent or else empty it for correct Output Element
       if (input.dataset.attributetype == "textContent") {
         if (input.value != "") {
@@ -707,7 +796,7 @@ const HTMLFunctions = {
     // Show message after done
     setTimeout(() => {
       Functions.showMsg(e, "All fields processed!");
-    }, 1500);
+    }, 500);
   },
 };
 

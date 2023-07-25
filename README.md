@@ -4,6 +4,14 @@ Simple GUI for adding HTML elements and stylizing their CSS code for faster and 
 
 ## Progress (Updates)
 
+- 2023-07-25
+
+  - Eight commit(!). The CSS Tab can now add unique CSS selectors, so you cannot add the same selector more than once. Each selector is in the style of a relative `div` with an absolute `span` that then makes the whole thing look like a `legend`. Then I put a remove button at the top right corner. Got CSS tips from chatGPT3.5 since I am not a frontender as the project name implies.
+
+  - I also solved the saving all input fields at once for each input field you add in the HTML Tab (the ✔️). It was not as challenging as I thought It would be as I could reuse the imported functions for changing or inserting and removing classes and ids.
+
+  - _NEXT STEPS/TODOS_: Also add actual CSS rules to the selected CSS selector, and if the selector already exists, then just the CSS rule to that chosen one. Also make it able to remove a selector and all its CSS rules within it. Start small now with easy CSS rules to get started. This is what will take the longest, and also figure out the special cases where a CSS rule can have a number of different units and values by (un)checking boxes to remove/add parts of the same CSS Rule. Once again: `margin:0 auto;` could also be: `margin: 0 auto 0 0;` which goes to show the complexity of this last step. The method insertRule() for the CSSStyleSheet object is simple though and it is already implemented so assuming it receives correct CSS rule syntax, it can create, change and remove applied CSS rules easily which are immediately applied to the DOM.
+
 - 2023-07-24
 
   - Seventh commit(!). There is now a CSS Tab where you can see your selectors such as ids and classes appear. The selectors are only added once and you must remove all instances of a class before it is fully removed from the list of suggested selectors. This took some code and it is interesting how there are some stuff to be done for such a simple functionality such as not showing any duplicates classes in a list of suggested selectors. When you add an id that is already used by some other input field you will be noticed and red text for 3 seconds in that input field. Helps informing what is wrong, why and where. Since id can only occur once in their CSS nature, that issue in showing up and being removed from list of suggested selectors was not an issue.
